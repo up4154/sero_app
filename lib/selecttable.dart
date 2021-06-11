@@ -57,32 +57,140 @@ class _SelectTableState extends State<SelectTable> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(8),
-              child: const Text("Table 1"),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 1",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
               color: Colors.yellow,
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              child: const Text('Table 2'),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 2",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
               color: Colors.green,
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              child: const Text('Table 3'),
-              color: Colors.yellow,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: const Text('Table 4'),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 3",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
               color: Colors.red,
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              child: const Text('Table 5'),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 4",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
+              color: Colors.red,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 5",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
               color: Colors.yellow,
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              child: const Text('Table 6'),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(
+                    Icons.table_chart,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Table 6",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
               color: Colors.green,
             ),
           ],
