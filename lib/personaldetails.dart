@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/rendering.dart';
-import 'package:sero_app/category.dart';
 import 'package:sero_app/selecttable.dart';
 
 class PersonalDetails extends StatefulWidget {
@@ -34,55 +32,129 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 40,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Add Customer',
-                style: TextStyle(
-                  fontFamily: 'AirbnbCerealExtraBold',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: Colors.black,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 40,
               ),
-            ),
-            SizedBox(
-              height: 13,
-            ),
-            ConstContainer(
-              hintText: 'First Middle Last',
-              text: 'Full Name',
-            ),
-            ConstContainer(
-              hintText: 'abc@gmail.com',
-              text: 'Email id',
-            ),
-            ConstContainer(
-              hintText: '+987654321',
-              text: 'Contact info',
-            ),
-            ConstContainer(
-                text: 'Home address',
-                hintText:
-                    'Flat number, apartment name, locality, city, pin code'),
-            ConstContainer(
-              hintText: '',
-              text: 'Customer group',
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-                child: Column(children: <Widget>[
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Gender',
+                  'Add Customer',
+                  style: TextStyle(
+                    fontFamily: 'AirbnbCerealExtraBold',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 13,
+              ),
+              ConstContainer(
+                hintText: 'First Middle Last',
+                text: 'Full Name',
+              ),
+              ConstContainer(
+                hintText: 'abc@gmail.com',
+                text: 'Email id',
+              ),
+              ConstContainer(
+                hintText: '+987654321',
+                text: 'Contact info',
+              ),
+              ConstContainer(
+                  text: 'Home address',
+                  hintText:
+                      'Flat number, apartment name, locality, city, pin code'),
+              ConstContainer(
+                hintText: '',
+                text: 'Customer group',
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                  child: Column(children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Gender',
+                    style: TextStyle(
+                      fontFamily: 'AirbnbCerealMedium',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Column(children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      SizedBox(
+                        width: 10,
+                      ), //SizedBox
+                      Text(
+                        'Female',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontFamily: 'AirbnbCerealMedium',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ), //Text
+                      SizedBox(width: 10), //SizedBox
+                      Checkbox(
+                        activeColor: Color(0xFF325288),
+                        value: this.value,
+                        onChanged: (bool value) {
+                          setState(() {
+                            if (value == true) {
+                              value1 = false;
+                              this.value = value;
+                            }
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ), //SizedBox
+                      Text(
+                        'Male',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontFamily: 'AirbnbCerealMedium',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ), //Text
+                      SizedBox(width: 10), //SizedBox
+                      Checkbox(
+                        activeColor: Color(0xFF325288),
+                        value: this.value1,
+                        onChanged: (bool value1) {
+                          setState(() {
+                            if (value1 == true) {
+                              value = false;
+                              this.value1 = value1;
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ]),
+              ])),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Date of birth',
                   style: TextStyle(
                     fontFamily: 'AirbnbCerealMedium',
                     fontWeight: FontWeight.w500,
@@ -94,130 +166,58 @@ class _PersonalDetailsState extends State<PersonalDetails> {
               SizedBox(
                 height: 10,
               ),
-              Column(children: <Widget>[
-                Row(
+              Align(
+                alignment: Alignment.topLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    SizedBox(
-                      width: 10,
-                    ), //SizedBox
                     Text(
-                      'Female',
+                      "${selectedDate.toLocal()}".split(' ')[0],
                       style: TextStyle(
-                        fontSize: 18.0,
-                        fontFamily: 'AirbnbCerealMedium',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ), //Text
-                    SizedBox(width: 10), //SizedBox
-                    Checkbox(
-                      activeColor: Color(0xFF325288),
-                      value: this.value,
-                      onChanged: (bool value) {
-                        setState(() {
-                          if (value == true) {
-                            value1 = false;
-                            this.value = value;
-                          }
-                        });
-                      },
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'AirbnbCerealBook'),
                     ),
                     SizedBox(
-                      width: 10,
-                    ), //SizedBox
-                    Text(
-                      'Male',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontFamily: 'AirbnbCerealMedium',
-                        fontWeight: FontWeight.w500,
+                      width: 20.0,
+                    ),
+                    SizedBox(
+                      width: 60,
+                      child: RaisedButton(
+                        onPressed: () => _selectDate(context), // Refer step 3
+                        child: Icon(
+                          Icons.date_range,
+                          color: Colors.grey,
+                        ),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.0),
+                            side: BorderSide(color: Color(0xFFfad586), width: 1)),
                       ),
-                    ), //Text
-                    SizedBox(width: 10), //SizedBox
-                    Checkbox(
-                      activeColor: Color(0xFF325288),
-                      value: this.value1,
-                      onChanged: (bool value1) {
-                        setState(() {
-                          if (value1 == true) {
-                            value = false;
-                            this.value1 = value1;
-                          }
-                        });
-                      },
                     ),
                   ],
                 ),
-              ]),
-            ])),
-            SizedBox(
-              height: 10,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Date of birth',
-                style: TextStyle(
-                  fontFamily: 'AirbnbCerealMedium',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 380,
+                height: 50,
+                child: CupertinoButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectTable(),
+                        ));
+                  },
+                  child: Text('Done'),
+                  color: Color(0xFFFFD45F),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "${selectedDate.toLocal()}".split(' ')[0],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'AirbnbCerealBook'),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: RaisedButton(
-                      onPressed: () => _selectDate(context), // Refer step 3
-                      child: Icon(
-                        Icons.date_range,
-                        color: Colors.grey,
-                      ),
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14.0),
-                          side: BorderSide(color: Color(0xFFfad586), width: 1)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 380,
-              height: 50,
-              child: CupertinoButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SelectTable(),
-                      ));
-                },
-                child: Text('Done'),
-                color: Color(0xFFFFD45F),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

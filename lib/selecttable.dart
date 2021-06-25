@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sero_app/category.dart';
 import 'package:sero_app/productdetail.dart';
 
 class SelectTable extends StatefulWidget {
