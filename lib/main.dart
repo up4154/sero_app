@@ -44,8 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      // Respond to button press
+                    },
+                    child: Text(
+                      "Sign up",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                   SizedBox(
-                    height: 80,
+                    height: 50,
                   ),
                   Image.asset(
                     'images/x.png',
@@ -67,7 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   Column(
                     children: <Widget>[
                       Align(
-                          alignment: Alignment.centerLeft, child: Text('Email')),
+                          alignment: Alignment.centerLeft,
+                          child: Text('Email')),
                       SizedBox(
                         height: 10,
                       ),
@@ -75,7 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         elevation: 10.0,
                         shadowColor: Colors.grey.shade100,
                         child: TextFormField(
-
                           autofocus: false,
                           decoration: InputDecoration(
                               icon: new Icon(Icons.email, color: Colors.grey),
@@ -143,7 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text("Login",
                           textAlign: TextAlign.center,
                           style: style.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.bold)),
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                   SizedBox(
@@ -178,15 +188,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 15,
                   ),
                   Text('Forgot your password?'),
-                  TextButton(
-                    onPressed: () {
-                      // Respond to button press
-                    },
-                    child: Text("Sign up",
-                    style: TextStyle(
-                      color: Colors.black
-                    ),),
-                  )
                 ],
               ),
             ),
