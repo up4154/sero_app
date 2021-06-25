@@ -29,9 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 80,
               ),
-              Text(
-                'Logo',
-                style: TextStyle(fontSize: 30.0),
+              Image.asset(
+                'images/x.png',
+                height: 130.0,
+                width: 180.0,
               ),
               SizedBox(
                 height: 30.0,
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 elevation: 5.0,
                 borderRadius: BorderRadius.circular(30.0),
-                color: const Color(0xFFfad586),
+                color: const Color(0xFFFFD45F),
                 child: MaterialButton(
                   minWidth: MediaQuery.of(context).size.width,
                   padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),

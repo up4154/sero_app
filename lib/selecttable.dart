@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sero_app/category.dart';
+import 'package:sero_app/productdetail.dart';
 
 class SelectTable extends StatefulWidget {
   const SelectTable({Key key}) : super(key: key);
@@ -192,6 +194,24 @@ class _SelectTableState extends State<SelectTable> {
                 ],
               ),
               color: Colors.green,
+            ),
+            Material(
+              elevation: 5.0,
+              borderRadius: BorderRadius.circular(30.0),
+              color: Colors.white,
+              child: MaterialButton(
+                  minWidth: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SelectItem()),
+                    );
+                  },
+                  child: Text(
+                    "Next",
+                    textAlign: TextAlign.center,
+                  )),
             ),
           ],
         ));

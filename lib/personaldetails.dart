@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
+import 'package:sero_app/category.dart';
 import 'package:sero_app/selecttable.dart';
 
 class PersonalDetails extends StatefulWidget {
@@ -213,7 +214,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                       ));
                 },
                 child: Text('Done'),
-                color: Color(0xFFfad586),
+                color: Color(0xFFFFD45F),
               ),
             )
           ],
