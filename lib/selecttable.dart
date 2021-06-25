@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/category.dart';
 import 'package:sero_app/productdetail.dart';
+import 'package:http/http.dart' as http;
 
 class SelectTable extends StatefulWidget {
   const SelectTable({Key key}) : super(key: key);
@@ -11,37 +14,24 @@ class SelectTable extends StatefulWidget {
 }
 
 class _SelectTableState extends State<SelectTable> {
-  // int _selectedIndex = 0;
-  // static const TextStyle optionStyle =
-  //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  // static const List<Widget> _widgetOptions = <Widget>[
-  //   Text(
-  //     'Index 0: Home',
-  //     style: optionStyle,
-  //   ),
-  //   Text(
-  //     'Index 1: Business',
-  //     style: optionStyle,
-  //   ),
-  //   Text(
-  //     'Index 2: School',
-  //     style: optionStyle,
-  //   ),
-  //   Text(
-  //     'Index 3: Cart',
-  //     style: optionStyle,
-  //   ),
-  //   Text(
-  //     'Index 4: My profile',
-  //     style: optionStyle,
-  //   ),
-  // ];
-  //
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  Map mapResponse;
+  List listofData;
+  Future fetchData() async {
+    http.Response response;
+    response = await http.get('https://pos.sero.app/connector/api/table.json');
+    if (response.statusCode == 200) {
+      setState(() {
+        mapResponse = json.decode(response.body);
+        listofData = mapResponse['data'];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,171 +40,106 @@ class _SelectTableState extends State<SelectTable> {
           title: const Text('Select table'),
           backgroundColor: Colors.yellow.shade200,
         ),
-        body: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisSpacing: 25,
-          mainAxisSpacing: 25,
-          crossAxisCount: 3,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
+        body: mapResponse == null
+            ? Container()
+            : GridView.count(
+                shrinkWrap: true,
+                primary: false,
+                padding: const EdgeInsets.all(20),
+                crossAxisSpacing: 25,
+                mainAxisSpacing: 25,
+                crossAxisCount: 3,
                 children: <Widget>[
-                  SizedBox(
-                    height: 10,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Icon(
+                          Icons.table_chart,
+                          size: 50,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          listofData[0]['name'].toString(),
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    color: Colors.yellow,
                   ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Icon(
+                          Icons.table_chart,
+                          size: 50,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Table 2",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    color: Colors.green,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Icon(
+                          Icons.table_chart,
+                          size: 50,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Table 3",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    color: Colors.red,
+                  ),
+                  Material(
+                    elevation: 5.0,
+                    borderRadius: BorderRadius.circular(30.0),
                     color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 1",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    child: MaterialButton(
+                        minWidth: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SelectItem()),
+                          );
+                        },
+                        child: Text(
+                          "Next",
+                          textAlign: TextAlign.center,
+                        )),
                   ),
                 ],
-              ),
-              color: Colors.yellow,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 2",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              ),
-              color: Colors.green,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 3",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              ),
-              color: Colors.red,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 4",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              ),
-              color: Colors.red,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 5",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              ),
-              color: Colors.yellow,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Icon(
-                    Icons.table_chart,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Table 6",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              ),
-              color: Colors.green,
-            ),
-            Material(
-              elevation: 5.0,
-              borderRadius: BorderRadius.circular(30.0),
-              color: Colors.white,
-              child: MaterialButton(
-                  minWidth: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SelectItem()),
-                    );
-                  },
-                  child: Text(
-                    "Next",
-                    textAlign: TextAlign.center,
-                  )),
-            ),
-          ],
-        ));
+              ));
     // bottomNavigationBar: BottomNavigationBar(
     //   items: const <BottomNavigationBarItem>[
     //     BottomNavigationBarItem(
