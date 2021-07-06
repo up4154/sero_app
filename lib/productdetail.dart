@@ -11,6 +11,7 @@ class SelectItem extends StatefulWidget {
 }
 
 class _SelectItemState extends State<SelectItem> {
+  List<String> images=['asset/burger.svg','asset/pizza.svg','asset/coke.svg','asset/fish.svg','asset/cake.svg','asset/juice.svg','asset/coffee_cup.svg','asset/ramen.svg','asset/coffee.svg','asset/thai food.svg'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,14 +19,20 @@ class _SelectItemState extends State<SelectItem> {
           title: const Text('Select your food item'),
           backgroundColor: Colors.yellow.shade200,
         ),
-        body: GridView.count(
+        body: GridView.builder(
           primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisSpacing: 25,
-          mainAxisSpacing: 25,
-          crossAxisCount: 3,
-          children: <Widget>[
-            Container(
+          padding: const EdgeInsets.all(10),
+          itemCount: images.length,
+          gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 25.0,
+            mainAxisSpacing: 25.0,
+
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              height: 550,
+              width: 550,
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -44,284 +51,20 @@ class _SelectItemState extends State<SelectItem> {
                     height: 6,
                   ),
                   new SvgPicture.asset(
-                    'asset/burger.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
+                    images[index],
+                    height: 50.0,
+                    width: 50.0,
                   ),
                   Text(
                     "Burger",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.black, fontSize: 15),
                   ),
                 ],
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/pizza.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Pizza",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/coke.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Coke",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/fish.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Fish",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/cake.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Cake",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/juice.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Drinks",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/coffee_cup.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Choco",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/ramen.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Ramen",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/coffee.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Latte",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
+            );
+          },
+
+            /*
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -421,7 +164,7 @@ class _SelectItemState extends State<SelectItem> {
                 ],
               ),
             ),
-          ],
+          ],*/
         ));
   }
 }
