@@ -113,10 +113,6 @@ class _SelectItemState extends State<SelectItem> {
                   ),
                 ),
                   onTap: () {
-                    /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => add()));*/
                     showDialog(context: context, builder: (context){
                       return add();
                     });

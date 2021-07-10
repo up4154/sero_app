@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryScreen extends StatefulWidget {
-  CategoryScreen({Key key, this.title}) : super(key: key);
+  CategoryScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
