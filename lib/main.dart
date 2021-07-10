@@ -31,8 +31,6 @@ class MyHomePage extends StatefulWidget
 }
 class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
 {
-   Animation<double> opacity;
-   AnimationController controller;
   checkLoginStatus() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
     print(sharedPreferences.getString('user_id'));
@@ -49,12 +47,6 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
     @override
     void initState() {
       super.initState();
-      controller = AnimationController(
-          duration: Duration(milliseconds: 3000), vsync: this);
-      opacity = Tween<double>(begin: 0.2, end: 1.0).animate(controller)
-        ..addListener(() {
-          setState(() {});
-        });
       Future.delayed(Duration(seconds: 3)).then((value) {
         checkLoginStatus();
       });
@@ -66,44 +58,14 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
         color: Color(0xffffd45f),
         child:SafeArea(
         child: Container (
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Column(
-                  children: [
-                    /*Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(36),
-                          child: new Image.asset(
-                            'images/x.png',height: 250,width: 250,),
-                        )),*/
-                    FadeAnimation(3,
-                        new Image.asset(
-                        'images/logo.png',height: 250,width: 250),//0xff000080
-                        ),
-
-                    FadeAnimation(3,
-                      Text('Sero App',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize:24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff000066)//0xff000080
-                        ),),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+         child: Text("Welcome"),
         ),
       ),
       ));
   }
 }
 
-class FadeAnimation extends StatelessWidget {
+/*class FadeAnimation extends StatelessWidget {
   final double delay;
   final Widget child;
 
@@ -124,7 +86,7 @@ class FadeAnimation extends StatelessWidget {
       tween: tween,
       child: child,
       builderWithChild: (context, child, animation) => Opacity(
-        opacity: animation["opacity"],
+        opacity: animation!["opacity"],
         child: Transform.translate(
             offset: Offset(0, animation["translateY"]),
             child: child
@@ -132,4 +94,4 @@ class FadeAnimation extends StatelessWidget {
       ),
     );
   }
-}
+}*/
