@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryScreen extends StatefulWidget {
-  CategoryScreen({Key key, this.title}) : super(key: key);
+  CategoryScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -20,9 +20,9 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   TextStyle style = TextStyle(fontSize: 15.0);
-  var _datalist=List<String>();
-  var _images=List<String>();
-  var _print=List<String>();
+  var _datalist=[];
+  var _images=[];
+  var _print=[];
   bool _isloading=false;
   var v;
   bool value = false;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sero_app/utsav/cart_screen.dart';
 
 class add extends StatefulWidget {
   @override
@@ -69,7 +70,14 @@ class _MyHomePageState extends State<add> {
 
                 ])
         ),
-               FlatButton(onPressed: (){print(_selectedModifiers);},
+               FlatButton(onPressed: (){
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(builder: (context) => CartScreen()
+                   ),
+                 );
+                 print(_selectedModifiers);
+                 },
                    color: Color(0xFFFFD45F),
                    child: Icon(Icons.arrow_forward))
       ]));

@@ -19,11 +19,11 @@ class _SearchListExampleState extends State<searchCustomer> {
   );
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
-  List<dynamic> _list=List();
-  List<dynamic> _phone=List();
-  bool _isSearching;
+  List<dynamic> _list=[];
+  List<dynamic> _phone=[];
+  bool _isSearching=false;
   String _searchText = "";
-  List searchresult = new List();
+  List searchresult = [];
 
   _SearchListExampleState() {
     _controller.addListener(() {
@@ -73,7 +73,9 @@ class _SearchListExampleState extends State<searchCustomer> {
   Widget build(BuildContext context) {
     return new Scaffold(
         key: globalKey,
-        appBar: buildAppBar(context),
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(100),
+            child: buildAppBar(context)),
       body:_isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)): new Container(
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.start,
