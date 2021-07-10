@@ -1,9 +1,13 @@
 import 'dart:convert';
-
+import 'package:sero_app/productdetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/services.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryScreen extends StatefulWidget {
   CategoryScreen({Key key, this.title}) : super(key: key);
@@ -23,21 +27,44 @@ class _CategoryScreenState extends State<CategoryScreen> {
   var v;
   bool value = false;
   bool value1 = false;
+  Future _scanQR() async {
+    try {
+      String qrResult = await BarcodeScanner.scan().toString();
+      print(qrResult);
+    }on PlatformException catch(e){
+      if(e.code==BarcodeScanner.cameraAccessDenied)
+        {
+          print("Camera Permission Denied");
+        }
+      else{
+        print(e.message);
+      }
+    }on FormatException{
+      print("You have pressed back button");
+    }catch(e){
+      print(e.toString());
+    }
+
+  }
   Future<void> get() async {
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
     _isloading=true;
     http.Response response = await http.get(
-        "https://pos.sero.app/connector/api/product", headers: {
+        "https://pos.sero.app/connector/api/variation/", headers: {
       'Authorization':
-      'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjlhNTYwNGYxZDAxMzU2NTRhY2YyYjE4MmEyOGUwMjA4M2QxOGUxY2Y1ZTY0MzM1MzdmNzc3MzFkMTMzZjNmNWQ5MTU3ZTEwOTQ5NDE3ZmQ3In0.eyJhdWQiOiIzIiwianRpIjoiOWE1NjA0ZjFkMDEzNTY1NGFjZjJiMTgyYTI4ZTAyMDgzZDE4ZTFjZjVlNjQzMzUzN2Y3NzczMWQxMzNmM2Y1ZDkxNTdlMTA5NDk0MTdmZDciLCJpYXQiOjE2MjM2NjAxMzksIm5iZiI6MTYyMzY2MDEzOSwiZXhwIjoxNjU1MTk2MTM5LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.WGLAu9KVi-jSt0q9yUyENDoEQnSLF1o0tezej5YozBFXJVQuEvSykvA9T6nnJghujQ2uU-nxUCRftLBhYzGjsu26YoKZBin70k1cqoYDfIWlVZ-fNkJi1vAXYOk9Pzxz7YFBa6hgz1MyUlDOI1LsSSsJh87hGBzIN6Ib_cYmGoo8KHVEfqbDtCNnZdOq68vjhwf6dwYEJUtxanaocuC-_XHkdM7769JiO48Ot93BqZjmRuVwvK9zE_8bilmhktlgD65ahgKOSS2yQlMdpgpsqP1W5Mfy_SBu32BkqTpAc5v2QWRTVhevES-blsfqdoZ59aw0OzrxyC8PvipyuhGQjs6V7eCrKK0jOei9g4RyhKlQueDXxxrWrqsStIsPzkn-kXA5k2NINIFgr2MlLtypTR76xnncWE5rCqm39K5V2_q3aXDQvCHdl3SVBKDqwNCUKq1CxbJlkF8r1R1mxXxN76TBZbcalO7wUX0F-D1j9oWkwXSZBe7L6vQQqvhC2AsQO2LB4QiByuFi1-J4h05vM3Kab0nmRvVeNYekhNP9HtTGWCH_UDuiDAp23VqUhMTrFygUAPEASU0fnw-rMKhrll_O0wMaBE33ZfItsV0o6pHCQhUjsDKwfmgVynOyYu0rX_huVN_PUBSYQVuCiabUMp8Q5Dv7n8Ky7_yI8XypQK4'
+      sharedPreferences.getString("Authorization")
     });
     v = (json.decode(response.body));
     for(var i in v["data"])
       {
-        _datalist.add(i["name"]);
-        print(i["image_url"]);
-        _images.add(i["image_url"]);
+        if(_datalist.contains(i["category"])){
+        }
+        else
+          {
+            _datalist.add(i["category"]);
+            print(_datalist);
+          }
       }
-    _print.addAll(_datalist);
     setState(() {
       _isloading=false;
     });
@@ -57,7 +84,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft:Radius.circular(30),bottomRight:Radius.circular(30),),
-              color :const Color(0xFFFFD45F),
+              color :const Color(0xffffd45f),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey,
@@ -97,55 +124,46 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       backgroundImage: NetworkImage('https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
                   ),
                   ]),
-                  Row(
+                  /*Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                       child:Material(
+                    children: [*/
+                Container(
+                  width: MediaQuery.of(context).size.width/1.3,
+                  child:
+                      Material(
                          elevation: 5.0,
                          borderRadius: BorderRadius.circular(30.0),
                          color: Colors.white,
                          child: MaterialButton(
-                           minWidth:270,
+                           minWidth:MediaQuery.of(context).size.width/3,
                            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                            onPressed: () {},
                            child: Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                              children: <Widget>[
                                GestureDetector(child:Icon(Icons.search),
                                  onTap: (){
-
                                  },
                                ),
-                               SizedBox(
-                                 width: 10,
-                               ),
+
                                Text(
-                                 "Search Customer",
+                                 "Search Product",
                                  textAlign: TextAlign.center,
                                  style: TextStyle(
                                    fontSize: 15,
                                  ),
                                ),
-                               SizedBox(
-                                 width: 40,
-                               ),
-                               GestureDetector(child:Icon(Icons.person_add,),
-                                 onTap: (){
-                                   Navigator.push(
-                                     context,
-                                     MaterialPageRoute(
-                                         builder: (context) => PersonalDetails()),
-                                   );
-                                 },
+
+                               GestureDetector(child:Icon(Icons.qr_code),
+                                 onTap: _scanQR,
                                ),
                              ],
                            ),
                          ),
                        ),
-                     ),
-                    ],
-                  )
-                ],
+                    //],
+                  //)
+                )],
               ),
               ),
               ),
@@ -156,44 +174,59 @@ class _CategoryScreenState extends State<CategoryScreen> {
     ),
       body: _isloading?Center(
           child: CircularProgressIndicator(color: Color(0xff000066),)):Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ListView.builder(
-            itemCount: _print.length,
+        child: ListView.builder(
+            itemCount: _datalist.length,
              itemBuilder: (BuildContext context, int index) {
                return Container(
-                   margin: EdgeInsets.only(top:20),
-                   child:Material(
-                 elevation: 5.0,
-                 borderRadius: BorderRadius.circular(30.0),
-                 color: Colors.white,
-                 child: MaterialButton(
-                     minWidth: MediaQuery.of(context).size.width,
-                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                     onPressed: () {},
-                     child: new Row(
+                 height: MediaQuery.of(context).size.height/10,
+                 decoration: BoxDecoration(
+                   borderRadius: BorderRadius.circular(10.0),
+                   color: Colors.white,
+                   boxShadow: [
+                 BoxShadow(
+                 color: Colors.grey,
+                   offset: const Offset(
+                     2.0,
+                     2.0,
+                   ),
+                   blurRadius: 2.0,
+                   spreadRadius: 1.0,
+                 ),
+                 ]//BoxShadow
+               ),
+                   margin: EdgeInsets.all(10),
+                   width: MediaQuery.of(context).size.width/1.5,
+                   child: Row(
+                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                        children: [
                          Container(
-                           height: 60,
-                             width:30,
-                             child:Image.network(_images[index],height: 30,width: 60,)),
-                         SizedBox(
+                             //child:Image.network(_images[index],height: 30,width:MediaQuery.of(context).size.width/4.5,)),
+                        /* SizedBox(
                            width: 15,
-                         ),
+                         ),*/),
                          Container(
-                             width: 150,
-                             child:Text(_print[index],
+                             width: MediaQuery.of(context).size.width/3,
+                             child:Text(_datalist[index],
                              softWrap: true,
                              textAlign: TextAlign.center,
                              style: style.copyWith(color: Colors.black))),
-                         SizedBox(
+                         /*SizedBox(
                            width:50,
-                         ),
-                         Icon(
-                           Icons.arrow_forward,
-                         ),
+                         ),*/
+                         Container(
+                           width: MediaQuery.of(context).size.width/3,
+                           child:  IconButton(icon:Icon(
+                             Icons.arrow_forward,
+                           ),
+                             onPressed:(){
+                               Navigator.push(
+                                   context,
+                                   MaterialPageRoute(
+                                       builder: (context) => SelectItem(category:_datalist[index])));
+                             } ,
+                           ),
+                         )
                        ],
-                     )),
                    )
                );
              },
@@ -204,7 +237,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
-      ),
     );
   }
 

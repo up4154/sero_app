@@ -1,14 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:sero_app/selecttable.dart';
 import 'package:sero_app/forget_password.dart';
 import 'package:sero_app/searchCustomer.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
 
   final String title;
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -18,13 +20,37 @@ class _HomeScreenState extends State<HomeScreen> {
   bool value = false;
   bool value1 = false;
   int _currentIndex = 0;
-
+  bool _isloading=false;
+  String _name;
+  fetch()
+  async {
+    setState(() {
+      _isloading=true;
+    });
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    var Response=await http.get("https://pos.sero.app/connector/api/user/loggedin",headers: {
+      'Authorization':
+          sharedPreferences.getString("Authorization")
+    });
+    var d=json.decode(Response.body.toString());
+    setState(() {
+      _name=d["data"]["first_name"];
+    });
+    setState(() {
+      _isloading=false;
+    });
+  }
   setBottomBarIndex(index){
     setState(() {
       _currentIndex = index;
     });
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    fetch();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,13 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: Center(
-        child: Padding(
+      body:  _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):Padding(
           padding: const EdgeInsets.all(36.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 SizedBox(
                   height: 80,
@@ -99,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 30.0,
                 ),
                 Text(
-                  'Cashier name',
+                 _name,
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -116,14 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () {},
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         GestureDetector(child:Icon(Icons.search),
                         onTap: (){
 
                         },
-                        ),
-                        SizedBox(
-                          width: 10,
                         ),
                         GestureDetector(child:Text(
                           "Search Customer",
@@ -137,9 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               MaterialPageRoute(
                                   builder: (context) => searchCustomer()));
                           }
-                        ),
-                        SizedBox(
-                          width: 40,
                         ),
                         GestureDetector(child:Icon(Icons.person_add,),
                         onTap: (){
@@ -216,7 +236,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
-      ),
     );
   }
 }

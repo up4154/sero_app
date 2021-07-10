@@ -17,15 +17,13 @@ class login extends StatefulWidget {
 class loginState extends State<login> {
   bool value = false;
   Model _model;
+  bool _isloading=false;
   TextStyle style = TextStyle(fontSize: 20.0);
   TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   _authenticate() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      value = true;
-    });
     Map input = {
       "grant_type": "password",
       "client_id": "3",
@@ -35,15 +33,28 @@ class loginState extends State<login> {
       "scope": ""
     };
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _isloading = true;
+      });
       var response = await http.post(
           "https://pos.sero.app/oauth/token", body: input);
+      var v= json.decode(response.body);
+      Map m= {
+        "Authorization": v["access_token"],
+      };
+      //print(m["Authorization"]);
       _model = Model.fromJson(json.decode(response.body.toString()));
       setState(() {
-        value = false;
+        _isloading = false;
       });
       if (_model.error == null){
-        sharedPreferences.setString("user_id", email.text);
-        print(sharedPreferences.getString("user_id"));
+        var s=_model.type+" "+m["Authorization"];
+        sharedPreferences.setString("Authorization",s);
+        print(sharedPreferences.getString("Authorization"));
+        if(this.value==true) {
+          sharedPreferences.setString("user_id", email.text);
+          print(sharedPreferences.getString("user_id"));
+        }
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -69,8 +80,8 @@ class loginState extends State<login> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        backgroundColor: Color(0xFFFFD45F),
-        body: value
+        backgroundColor: Color(0xffffd45f),
+        body: _isloading
             ? Center(
             child: CircularProgressIndicator(color: Color(0xff000066),))
             : Center(
@@ -268,8 +279,12 @@ class Model
 {
    final String error;
    final String error_description;
+   var type;
+   var access_token;
   Model.fromJson(Map<String,dynamic>Json):
     error=Json["error"],
-   error_description=Json["error_description"];
+   error_description=Json["error_description"],
+   type=Json["token_type"],
+   access_token=Json["access_token"];
 
 }

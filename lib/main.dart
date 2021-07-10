@@ -34,11 +34,11 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
   Animation<double> opacity;
   AnimationController controller;
   checkLoginStatus() async {
-    SharedPreferences storage=await SharedPreferences.getInstance();
-    print(storage.getString('user_Id'));
-    if (storage.getString('user_Id') != null) {
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    print(sharedPreferences.getString('user_id'));
+    if (sharedPreferences.getString('user_id') != null) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (
+          MaterialPageRoute(builder: (BuildContext context) => login()), (
           Route<dynamic> route) => false);
     } else {
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
@@ -63,7 +63,7 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xfffdd460),
+        color: Color(0xffffd45f),
         child:SafeArea(
         child: Container (
           child: Column(
