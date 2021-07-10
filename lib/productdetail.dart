@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectItem extends StatefulWidget {
-  SelectItem({@required this.category});
+  SelectItem({required this.category});
   String category;
   //const SelectItem({Key key}) : super(key: key);
 
@@ -19,7 +19,7 @@ class SelectItem extends StatefulWidget {
 
 class _SelectItemState extends State<SelectItem> {
 
-    List<String> selectedReportList = List();
+    List<String> selectedReportList = [];
     List<String> images = [];
     List<String> name = [];
     bool _isloading = false;

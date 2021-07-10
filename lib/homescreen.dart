@@ -8,7 +8,7 @@ import 'package:sero_app/searchCustomer.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
+  HomeScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
   @override
@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool value1 = false;
   int _currentIndex = 0;
   bool _isloading=false;
-  String _name;
+  late String _name;
   fetch()
   async {
     setState(() {

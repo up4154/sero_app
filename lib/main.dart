@@ -31,8 +31,8 @@ class MyHomePage extends StatefulWidget
 }
 class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
 {
-  Animation<double> opacity;
-  AnimationController controller;
+   Animation<double> opacity;
+   AnimationController controller;
   checkLoginStatus() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
     print(sharedPreferences.getString('user_id'));
