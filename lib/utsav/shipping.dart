@@ -260,9 +260,8 @@ class _ShippingState extends State<Shipping> {
                                   width: 130,
                                 ),
                                 onTap :(){
-                                  Navigator.push(
+                                  Navigator.pop(
                                     context,
-                                    MaterialPageRoute(builder: (context) => PaymentScreen(Ammount: widget.Ammount, Balance: widget.Balance, Discountt: widget.Discountt, Redeem: widget.Redeem,)),
                                   );
                                 },
                               ),

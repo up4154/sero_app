@@ -23,7 +23,7 @@ class _SplitPayState extends State<SplitPay> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 140),
+        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 100),
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         elevation: 16,
