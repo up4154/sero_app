@@ -18,29 +18,36 @@ class SelectItem extends StatefulWidget {
 }
 
 class _SelectItemState extends State<SelectItem> {
-
+    var v;
     List<String> selectedReportList = [];
     List<String> images = [];
     List<String> name = [];
+    List<String> id = [];
     bool _isloading = false;
     Future<void> get() async {
       setState(() {
         _isloading = true;
       });
+      int i=1;
       SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      do{
       http.Response response = await http.get(
-          "https://pos.sero.app/connector/api/variation/", headers: {
+          "https://pos.sero.app/connector/api/variation/?page=$i", headers: {
         'Authorization':
         sharedPreferences.getString("Authorization")
 
       });
-      var v = (json.decode(response.body));
+       v = (json.decode(response.body));
       for (var i in v["data"]) {
         if (i["category"] == widget.category) {
+          print(i["product_name"]+i["sell_price_inc_tax"]);
           name.add(i["product_name"]);
           images.add(i["product_image_url"]);
+          id.add(i["product_id"].toString());
         }
       }
+      i++;
+      }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
       setState(() {
         _isloading = false;
       });
@@ -57,7 +64,7 @@ class _SelectItemState extends State<SelectItem> {
             title: Text(widget.category), /*'Select your food item'-*/
             backgroundColor: Color(0xffffd45f),
           ),
-          body: GridView.builder(
+          body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):GridView.builder(
               primary: false,
               padding: const EdgeInsets.all(10),
               itemCount: images.length,
@@ -112,10 +119,36 @@ class _SelectItemState extends State<SelectItem> {
                     ],
                   ),
                 ),
-                  onTap: () {
-                    showDialog(context: context, builder: (context){
-                      return add();
+                  onTap: () async {
+                    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                    print(id[index]);
+                  http.Response response = await http.get(
+      "https://pos.sero.app/connector/api/product/${id[index]}", headers: {
+                    'Authorization':
+                    sharedPreferences.getString("Authorization")
+
+                  });
+                  int x=0;
+                  var v = (json.decode(response.body));
+                  //print(v["data"][0]["modifiers"]);
+                   List<dynamic> check=v["data"][0]["modifiers"];
+                  List<String> modifiers=[];
+                  if(!check.isEmpty){
+                    for (var _mod in v["data"][0]["modifiers"][0]) {
+                      print(_mod["name"]);
+                      modifiers.add(_mod["name"]);
+                      x++;
+                    }
+                  }
+                  if(modifiers.isEmpty)
+                    {
+                      print("Item added to cart");
+                    }
+                  else {
+                    showDialog(context: context, builder: (context) {
+                      return add(modifiers: modifiers);
                     });
+                  }
                   }
 
                     /*showDialog(context: context, builder: (context)
