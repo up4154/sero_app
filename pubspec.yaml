@@ -26,7 +26,7 @@ dependencies:
   flutter_web_auth:
   path:
   localstorage: ^3.0.0
-  shared_preferences:
+  shared_preferences: ^2.0.6
   csc_picker: ^0.2.5
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -34,9 +34,9 @@ dependencies:
   http:
   cupertino_icons: ^1.0.2
   simple_animations: ^3.1.1
-  sa_v1_migration:
+#  sa_v1_migration:
   fluttertoast: ^8.0.7
-  barcode_scan:
+#  barcode_scan:
   badges:
 
 

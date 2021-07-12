@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:sero_app/productdetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+// import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:http/http.dart' as http;
@@ -27,25 +27,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
   var v;
   bool value = false;
   bool value1 = false;
-  Future _scanQR() async {
-    try {
-      String qrResult = await BarcodeScanner.scan().toString();
-      print(qrResult);
-    }on PlatformException catch(e){
-      if(e.code==BarcodeScanner.cameraAccessDenied)
-        {
-          print("Camera Permission Denied");
-        }
-      else{
-        print(e.message);
-      }
-    }on FormatException{
-      print("You have pressed back button");
-    }catch(e){
-      print(e.toString());
-    }
-
-  }
+  // Future _scanQR() async {
+  //   try {
+  //     String qrResult = await BarcodeScanner.scan().toString();
+  //     print(qrResult);
+  //   }on PlatformException catch(e){
+  //     if(e.code==BarcodeScanner.cameraAccessDenied)
+  //       {
+  //         print("Camera Permission Denied");
+  //       }
+  //     else{
+  //       print(e.message);
+  //     }
+  //   }on FormatException{
+  //     print("You have pressed back button");
+  //   }catch(e){
+  //     print(e.toString());
+  //   }
+  //
+  // }
   Future<void> get() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
     setState(() {
@@ -54,9 +54,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
     int i=1;
     do{
     http.Response response = await http.get(
-        "https://pos.sero.app/connector/api/variation/?page=$i", headers: {
+        Uri.parse("https://pos.sero.app/connector/api/variation/?page=$i"), headers: {
       'Authorization':
-      sharedPreferences.getString("Authorization")
+      sharedPreferences.getString("Authorization")?? ''
     });
     v = (json.decode(response.body));
     print("curr+"+v["meta"]["current_page"].toString());
@@ -161,9 +161,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                  ),
                                ),
 
-                               GestureDetector(child:Icon(Icons.qr_code),
-                                 onTap: _scanQR,
-                               ),
+                               // GestureDetector(child:Icon(Icons.qr_code),
+                               //   onTap: _scanQR,
+                               // ),
                              ],
                            ),
                          ),
