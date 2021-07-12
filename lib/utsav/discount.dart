@@ -71,7 +71,7 @@ class _DiscountState extends State<Discount> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 140),
+        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 100),
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         elevation: 16,
@@ -80,7 +80,7 @@ class _DiscountState extends State<Discount> {
           padding: const EdgeInsets.only(top: 8.0),
           child: SingleChildScrollView(
             child: Container(
-              height: 430,
+              height: 450,
               child: ListView(
                 children: <Widget>[
                   Column(
@@ -334,9 +334,8 @@ class _DiscountState extends State<Discount> {
                           width: 130,
                         ),
                         onTap :(){
-                          Navigator.push(
+                          Navigator.pop(
                             context,
-                            MaterialPageRoute(builder: (context) => PaymentScreen(Ammount: widget.Ammount, Balance: widget.Balance, Discountt: widget.Discountt, Redeem: widget.Redeem,)),
                           );
                         },
                       ),

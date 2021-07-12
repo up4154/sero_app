@@ -161,7 +161,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(bottom: 8,right: 30),
+                                  padding: const EdgeInsets.only(bottom: 8,right: 30,left: 23),
                                   child: Text('Discount Amount',
                                     style:TextStyle(
                                       fontSize: 15,
@@ -965,7 +965,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left:25,right: 12),
+                            padding: const EdgeInsets.only(left:10),
                             child: Container(
                               child: GestureDetector(
                                 child: Container(
@@ -1011,7 +1011,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left:15,right: 12),
+                            padding: const EdgeInsets.only(left:15),
                             child: Container(
                               child: GestureDetector(
                                 child: Container(
@@ -1057,7 +1057,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left:20,right: 8),
+                            padding: const EdgeInsets.only(left:18),
                             child: Container(
                               child: GestureDetector(
                                 child: Container(
@@ -1108,7 +1108,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left:25,right: 15),
+                            padding: const EdgeInsets.only(left:8,right: 15),
                             child: Container(
                               child: GestureDetector(
                                 child: Container(

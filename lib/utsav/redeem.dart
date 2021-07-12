@@ -44,7 +44,7 @@ class _RedeemPointState extends State<RedeemPoint> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 140),
+        insetPadding: EdgeInsets.only(left: 20,right: 20,top: 90),
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         elevation: 16,
@@ -53,7 +53,7 @@ class _RedeemPointState extends State<RedeemPoint> {
           padding: const EdgeInsets.only(top: 8.0),
           child: SingleChildScrollView(
             child: Container(
-                height: 450,
+                height: 500,
                 child: ListView(
                   children: [
                     Column(
@@ -195,9 +195,8 @@ class _RedeemPointState extends State<RedeemPoint> {
                                   width: 130,
                                 ),
                                 onTap :(){
-                                  Navigator.push(
+                                  Navigator.pop(
                                     context,
-                                    MaterialPageRoute(builder: (context) => PaymentScreen(Ammount: widget.Ammount, Balance: widget.Balance, Discountt: widget.Discountt, Redeem: widget.Redeem,)),
                                   );
                                 },
                               ),
