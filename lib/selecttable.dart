@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sero_app/productdetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:sero_app/category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
