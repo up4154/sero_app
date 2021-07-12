@@ -1,17 +1,13 @@
 import 'dart:convert';
-import 'package:path/path.dart';
 import 'package:sero_app/addons_and_modifiers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sero_app/category.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectItem extends StatefulWidget {
-  SelectItem({required this.category});
   String category;
-  //const SelectItem({Key key}) : super(key: key);
+  SelectItem({Key ? key,required this.category});
 
   @override
   State<SelectItem> createState() => _SelectItemState();
@@ -32,9 +28,9 @@ class _SelectItemState extends State<SelectItem> {
       SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
       do{
       http.Response response = await http.get(
-          "https://pos.sero.app/connector/api/variation/?page=$i", headers: {
+          Uri.parse("https://pos.sero.app/connector/api/variation/?page=$i"), headers: {
         'Authorization':
-        sharedPreferences.getString("Authorization")
+        sharedPreferences.getString("Authorization") ?? ''
 
       });
        v = (json.decode(response.body));
@@ -123,12 +119,12 @@ class _SelectItemState extends State<SelectItem> {
                     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
                     print(id[index]);
                   http.Response response = await http.get(
-      "https://pos.sero.app/connector/api/product/${id[index]}", headers: {
+                    Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
+      , headers: {
                     'Authorization':
-                    sharedPreferences.getString("Authorization")
+                    sharedPreferences.getString("Authorization") ?? ''
 
                   });
-                  int x=0;
                   var v = (json.decode(response.body));
                   //print(v["data"][0]["modifiers"]);
                    List<dynamic> check=v["data"][0]["modifiers"];
@@ -137,7 +133,6 @@ class _SelectItemState extends State<SelectItem> {
                     for (var _mod in v["data"][0]["modifiers"][0]) {
                       print(_mod["name"]);
                       modifiers.add(_mod["name"]);
-                      x++;
                     }
                   }
                   if(modifiers.isEmpty)

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sa_v1_migration/simple_animations/controlled_animation.dart';
-import 'package:sa_v1_migration/simple_animations/multi_track_tween.dart';
 import 'package:sero_app/homescreen.dart';
 import 'package:sero_app/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';

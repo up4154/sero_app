@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sero_app/productdetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:sero_app/category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -124,9 +123,9 @@ class _SelectTableState extends State<SelectTable> {
 Future<Map<String, dynamic>> getData() async {
   SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
   String myUrl = "https://pos.sero.app/connector/api/table";
-  http.Response response = await http.get(myUrl, headers: {
+  http.Response response = await http.get(Uri.parse(myUrl), headers: {
     'Authorization':
-    sharedPreferences.getString("Authorization")
+    sharedPreferences.getString("Authorization") ?? ''
   });
   return json.decode(response.body);
 }
