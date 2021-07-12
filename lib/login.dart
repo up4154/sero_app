@@ -37,7 +37,7 @@ class loginState extends State<login> {
         _isloading = true;
       });
       var response = await http.post(
-          "https://pos.sero.app/oauth/token", body: input);
+          Uri.parse("https://pos.sero.app/oauth/token"), body: input);
       var v= json.decode(response.body);
       Map m= {
         "Authorization": v["access_token"],

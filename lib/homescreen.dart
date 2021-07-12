@@ -28,9 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
       _isloading=true;
     });
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-    var Response=await http.get("https://pos.sero.app/connector/api/user/loggedin",headers: {
+    var Response=await http.get(Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),headers: {
       'Authorization':
-          sharedPreferences.getString("Authorization")
+          sharedPreferences.getString('Authorization') ?? ''
     });
     var d=json.decode(Response.body.toString());
     setState(() {

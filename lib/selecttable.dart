@@ -124,9 +124,9 @@ class _SelectTableState extends State<SelectTable> {
 Future<Map<String, dynamic>> getData() async {
   SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
   String myUrl = "https://pos.sero.app/connector/api/table";
-  http.Response response = await http.get(myUrl, headers: {
+  http.Response response = await http.get(Uri.parse(myUrl), headers: {
     'Authorization':
-    sharedPreferences.getString("Authorization")
+    sharedPreferences.getString("Authorization") ?? ''
   });
   return json.decode(response.body);
 }

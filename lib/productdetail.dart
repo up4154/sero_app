@@ -32,9 +32,9 @@ class _SelectItemState extends State<SelectItem> {
       SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
       do{
       http.Response response = await http.get(
-          "https://pos.sero.app/connector/api/variation/?page=$i", headers: {
+          Uri.parse("https://pos.sero.app/connector/api/variation/?page=$i"), headers: {
         'Authorization':
-        sharedPreferences.getString("Authorization")
+        sharedPreferences.getString("Authorization") ?? ''
 
       });
        v = (json.decode(response.body));
@@ -123,9 +123,10 @@ class _SelectItemState extends State<SelectItem> {
                     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
                     print(id[index]);
                   http.Response response = await http.get(
-      "https://pos.sero.app/connector/api/product/${id[index]}", headers: {
+                    Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
+      , headers: {
                     'Authorization':
-                    sharedPreferences.getString("Authorization")
+                    sharedPreferences.getString("Authorization") ?? ''
 
                   });
                   int x=0;
