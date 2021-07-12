@@ -48,23 +48,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
   Future<void> get() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-    _isloading=true;
+    setState(() {
+      _isloading=true;
+    });
+    int i=1;
+    do{
     http.Response response = await http.get(
-        "https://pos.sero.app/connector/api/variation/", headers: {
+        "https://pos.sero.app/connector/api/variation/?page=$i", headers: {
       'Authorization':
       sharedPreferences.getString("Authorization")
     });
     v = (json.decode(response.body));
+    print("curr+"+v["meta"]["current_page"].toString());
     for(var i in v["data"])
       {
         if(_datalist.contains(i["category"])){
         }
-        else
-          {
-            _datalist.add(i["category"]);
-            print(_datalist);
-          }
+        else {
+          if(i["category"]!=null)
+          _datalist.add(i["category"]);
+          print(_datalist);
+           }
       }
+    i++;
+    }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
     setState(() {
       _isloading=false;
     });

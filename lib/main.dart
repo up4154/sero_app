@@ -36,7 +36,7 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
     print(sharedPreferences.getString('user_id'));
     if (sharedPreferences.getString('user_id') != null) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => login()), (
+          MaterialPageRoute(builder: (BuildContext context) => HomeScreen(title: "Home Screen")), (
           Route<dynamic> route) => false);
     } else {
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(

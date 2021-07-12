@@ -8,7 +8,7 @@ import 'package:sero_app/searchCustomer.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key, required this.title}) : super(key: key);
+  HomeScreen({Key? key,  required this.title}) : super(key: key);
 
   final String title;
   @override

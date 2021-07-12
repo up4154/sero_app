@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/productdetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:sero_app/category.dart';
@@ -13,6 +14,9 @@ class SelectTable extends StatefulWidget {
 class _SelectTableState extends State<SelectTable> {
   bool _isloading = false;
   List<String> _tablenos = [];
+  List<String> _table_status=[];
+  List<int> id=[];
+  int i=0;
   _SelectTableState() {
     fetchData().then((val) =>
         setState(() {
@@ -28,7 +32,9 @@ class _SelectTableState extends State<SelectTable> {
     for(var i in data['data'])
     {
       tableno.add(i["name"]);
-      print(i["name"]);
+      _table_status.add(i["table_status"]);
+      id.add(i["id"]);
+      print(id);
     }
     return tableno;
   }
@@ -54,11 +60,13 @@ class _SelectTableState extends State<SelectTable> {
         primary: false,
         padding: const EdgeInsets.all(20),
         itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(child:Container(
+            i=index;
+          return GestureDetector(
+            child:Container(
             //height: MediaQuery.of(context).size.height,
             //width:  MediaQuery.of(context).size.height/2,
             decoration: BoxDecoration(
-              color: Colors.green,
+              color:_table_status[i]=="Occupied"?Colors.red:_table_status[i]=="available\t"?Colors.green:Colors.yellow,
               borderRadius: BorderRadius.circular(20),
             ),
             child:Column(
@@ -83,11 +91,25 @@ class _SelectTableState extends State<SelectTable> {
             ),
           ),
             onTap: (){
+            if(_table_status[index]=="Occupied")
+            {
+              print(id[index]);
+              Fluttertoast.showToast(
+                  msg: "Sorry!....This table is occupied",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  textColor: Colors.red,
+                  timeInSecForIosWeb: 10);
+            }
+            else {
+              print(id[index]);
+              print(_table_status[i]);
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => CategoryScreen(title: '',)));
-            },
+            }
+              },
           );
         }, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
