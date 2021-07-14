@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/utsav/payment_screen.dart';
 import 'package:sero_app/utsav/void.dart';
-
 class CartScreen extends StatefulWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
