@@ -3,6 +3,8 @@ import 'package:sero_app/addons_and_modifiers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:sero_app/utsav/cart_screen.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectItem extends StatefulWidget {
@@ -15,8 +17,11 @@ class SelectItem extends StatefulWidget {
 
 class _SelectItemState extends State<SelectItem> {
     var v;
-    List<String> selectedReportList = [];
+    //List<String> selectedReportList = [];
     List<String> images = [];
+    List<String> price=[];
+    List<String> _selectedItems = [];
+    List<String> _selectedItemsprice = [];
     List<String> name = [];
     List<String> id = [];
     bool _isloading = false;
@@ -36,7 +41,7 @@ class _SelectItemState extends State<SelectItem> {
        v = (json.decode(response.body));
       for (var i in v["data"]) {
         if (i["category"] == widget.category) {
-          print(i["product_name"]+i["sell_price_inc_tax"]);
+          price.add(i["sell_price_inc_tax"]);
           name.add(i["product_name"]);
           images.add(i["product_image_url"]);
           id.add(i["product_id"].toString());
@@ -137,7 +142,12 @@ class _SelectItemState extends State<SelectItem> {
                   }
                   if(modifiers.isEmpty)
                     {
-                      print("Item added to cart");
+                      _selectedItems.add(name[index]);
+                      _selectedItemsprice.add(price[index]);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CartScreen(selectedItems: _selectedItems,selectedItemsprice: _selectedItemsprice,)),
+                      );
                     }
                   else {
                     showDialog(context: context, builder: (context) {

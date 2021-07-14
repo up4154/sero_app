@@ -4,6 +4,11 @@ import 'package:sero_app/utsav/payment_screen.dart';
 import 'package:sero_app/utsav/void.dart';
 
 class CartScreen extends StatefulWidget {
+  List<String> selectedItems = [];
+  List<String> selectedItemsprice = [];
+  CartScreen({ Key? key,
+    required this.selectedItems
+    ,required this.selectedItemsprice,}) : super(key: key);
   @override
   _CartScreenState createState() => _CartScreenState();
 }
@@ -270,9 +275,7 @@ class _CartScreenState extends State<CartScreen> {
                 IconButton(
                   onPressed:(){
                     setState(() {
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CartScreen()),
-                      );
+                      Navigator.pop(context);
                     });
                   },
                   iconSize: 40,

@@ -20,31 +20,35 @@ class _HomeScreenState extends State<HomeScreen> {
   bool value = false;
   bool value1 = false;
   int _currentIndex = 0;
-  bool _isloading=false;
+  bool _isloading = false;
   late String _name;
+
   fetch()
+
   async {
     setState(() {
-      _isloading=true;
+      _isloading = true;
     });
-    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-    var Response=await http.get(Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),headers: {
-      'Authorization':
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var Response = await http.get(
+        Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),
+        headers: {
+          'Authorization':
           sharedPreferences.getString('Authorization') ?? ''
-    });
-    var d=json.decode(Response.body.toString());
+        });
+    var d = json.decode(Response.body.toString());
     setState(() {
-      _name=d["data"]["first_name"];
+      _name = d["data"]["first_name"];
     });
     setState(() {
-      _isloading=false;
+      _isloading = false;
     });
-  }
-  setBottomBarIndex(index){
+  } setBottomBarIndex(index) {
     setState(() {
       _currentIndex = index;
     });
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -116,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 80,
                 ),
                 Image.asset(
-                  'images/logo.png',
+                  'images/x.png',
                   height: 130.0,
                   width: 180.0,
                 ),
