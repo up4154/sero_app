@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/utsav/payment_screen.dart';
 import 'package:sero_app/utsav/void.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class CartScreen extends StatefulWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
@@ -13,12 +15,17 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  List<String> selectedItems = [];
+  List<String> selectedItemsprice = [];
   double paymentAmount=200.00;
   double discount =0.0;
+  bool _isloading =false;
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
   int _counter =1;
+  int table_id=0;
+  String table_name='';
   setBottomBarIndex(index){
     setState(() {
       _currentIndex = index;
@@ -35,8 +42,26 @@ class _CartScreenState extends State<CartScreen> {
       _counter--;
     });
   }
+  Future<void> getSharedPrefs() async {
+    setState(() {
+       _isloading =true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    table_id=  prefs.getInt("table_id")!;
+    table_name =prefs.getString("table_name")!;
+    setState(() {
+      _isloading =false;
+    });
+  }
+  @override
+  void initState()  {
+    getSharedPrefs();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    selectedItems =widget.selectedItems;
+    selectedItemsprice =widget.selectedItemsprice;
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
@@ -147,7 +172,7 @@ class _CartScreenState extends State<CartScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Table-11',
+                    Text(table_name,
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 15
@@ -166,7 +191,7 @@ class _CartScreenState extends State<CartScreen> {
         toolbarHeight: 170,
         backgroundColor: Colors.white,
       ),
-      body: BodyLayout(),
+      body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
       bottomSheet:_currentIndex == 3 ? new Container(
         height: 70,
         decoration: BoxDecoration(
@@ -359,34 +384,22 @@ class _CartScreenState extends State<CartScreen> {
 }
 
 class BodyLayout extends StatelessWidget {
-  const BodyLayout({Key ? key}) : super(key: key);
-
+  List<String> selectedItems = [];
+  List<String> selectedItemsprice = [];
+  BodyLayout({ Key? key,
+    required this.selectedItems
+    ,required this.selectedItemsprice,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return _myListView(context);
+    return ListView.builder(
+      itemCount: selectedItems.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(selectedItems[index]+selectedItemsprice[index]),
+        );
+      },
+    );
   }
 }
 
-Widget _myListView(BuildContext context) {
-
-  final europeanCountries = ['Albania', 'Andorra', 'Armenia', 'Austria',
-    'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
-    'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland',
-    'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
-    'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania',
-    'Luxembourg', 'Macedonia', 'Malta', 'Moldova', 'Monaco', 'Montenegro',
-    'Netherlands', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russia',
-    'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
-    'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom'];
-
-  return ListView.builder(
-    itemCount: europeanCountries.length,
-    itemBuilder: (context, index) {
-      return ListTile(
-        title: Text(europeanCountries[index]),
-      );
-    },
-  );
-
-}
 
