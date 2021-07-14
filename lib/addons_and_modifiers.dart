@@ -69,11 +69,11 @@ class _MyHomePageState extends State<add> {
                 ])
         ),
                FlatButton(onPressed: (){
-                 Navigator.push(
+                 /*Navigator.push(
                    context,
                    MaterialPageRoute(builder: (context) => CartScreen()
                    ),
-                 );
+                 );*/
                  print(_selectedModifiers);
                  },
                    color: Color(0xFFFFD45F),

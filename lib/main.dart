@@ -52,14 +52,13 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Color(0xffffd45f),
-        child:SafeArea(
-        child: Container (
-         child: Text("Welcome"),
-        ),
+      backgroundColor: Color(0xffffd45f),
+      body: Center(child:Container(
+        width: MediaQuery.of(context).size.width/1.5,
+          child:Center(
+        child: Image.asset("images/x.png"),)
       ),
-      ));
+    ));
   }
 }
 

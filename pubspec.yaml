@@ -36,8 +36,9 @@ dependencies:
   simple_animations: ^3.1.1
 #  sa_v1_migration:
   fluttertoast: ^8.0.7
-#  barcode_scan:
+  #barcode_scan: any
   badges:
+  flutter_barcode_scanner: ^2.0.0
 
 
 

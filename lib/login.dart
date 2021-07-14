@@ -47,7 +47,7 @@ class loginState extends State<login> {
       setState(() {
         _isloading = false;
       });
-      if (_model.error == null){
+      if (_model.error == null||_model.error == ''){
         var s=_model.type+" "+m["Authorization"];
         sharedPreferences.setString("Authorization",s);
         print(sharedPreferences.getString("Authorization"));
@@ -55,14 +55,17 @@ class loginState extends State<login> {
           sharedPreferences.setString("user_id", email.text);
           print(sharedPreferences.getString("user_id"));
         }
+        setState(() {
+          _isloading=false;
+        });
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(title: '', key: null,)),
+          MaterialPageRoute(builder: (context) => HomeScreen(title: '')),
         );
       }
       else {
         Fluttertoast.showToast(
-            msg: _model.error + " : " + _model.error_description,
+            msg: _model.error??'' + " : " ,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             textColor: Colors.red,
@@ -72,7 +75,7 @@ class loginState extends State<login> {
     else
     {
       setState(() {
-        value = false;
+        _isloading = false;
       });
     }
   }
@@ -277,14 +280,14 @@ class loginState extends State<login> {
 }
 class Model
 {
-  final String error;
-  final String error_description;
+  final String? error;
+  final String? error_description;
   var type;
   var access_token;
   Model.fromJson(Map<String,dynamic>Json):
-        error=Json["error"],
+        error=Json["error"]??'',
         error_description=Json["error_description"],
-        type=Json["token_type"],
+        type=Json["token_type"]??'',
         access_token=Json["access_token"];
 
 }
