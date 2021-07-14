@@ -89,7 +89,8 @@ class _SelectTableState extends State<SelectTable> {
               ],
             ),
           ),
-            onTap: (){
+            onTap: ()async {
+              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
             if(_table_status[index]=="Occupied")
             {
               print(id[index]);
@@ -101,7 +102,9 @@ class _SelectTableState extends State<SelectTable> {
                   timeInSecForIosWeb: 10);
             }
             else {
-              print(id[index]);
+              sharedPreferences.setString("table_name",_tablenos[index]);
+              sharedPreferences.setInt("table_id", id[index]);
+              print(sharedPreferences.getInt("table_id"));
               print(_table_status[i]);
               Navigator.push(
                   context,
