@@ -188,7 +188,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ]
         ),
-        toolbarHeight: 170,
+        toolbarHeight: 145,
         backgroundColor: Colors.white,
       ),
       body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
@@ -391,11 +391,29 @@ class BodyLayout extends StatelessWidget {
     ,required this.selectedItemsprice,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    int _counter=1;
     return ListView.builder(
       itemCount: selectedItems.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(selectedItems[index]+selectedItemsprice[index]),
+        return Card(
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(35),
+          ),
+          child: ListTile(
+            horizontalTitleGap:180 ,
+            title: Text(
+              selectedItems[index],
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+            trailing: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+          ),
         );
       },
     );
