@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/utsav/payment_screen.dart';
@@ -23,7 +25,7 @@ class _CartScreenState extends State<CartScreen> {
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
-  int _counter =1;
+
   int table_id=0;
   String table_name='';
   setBottomBarIndex(index){
@@ -31,17 +33,7 @@ class _CartScreenState extends State<CartScreen> {
       _currentIndex = index;
     });
   }
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-  void _decrementCounter() {
-    setState(() {
-      if(_counter>1)
-      _counter--; 
-    });
-  }
+
   Future<void> getSharedPrefs() async {
     setState(() {
        _isloading =true;
@@ -383,21 +375,39 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
-class BodyLayout extends StatelessWidget {
+class BodyLayout extends StatefulWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
   BodyLayout({ Key? key,
     required this.selectedItems
     ,required this.selectedItemsprice,}) : super(key: key);
+
+  @override
+  _BodyLayoutState createState() => _BodyLayoutState();
+}
+
+class _BodyLayoutState extends State<BodyLayout> {
+  int _counter =1;
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+  void _decrementCounter() {
+    setState(() {
+      if(_counter>1)
+        _counter--;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: selectedItems.length,
+      itemCount: widget.selectedItems.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(top: 10,left: 8),
           child: Container(
-              height:MediaQuery.of(context).size.height/14 ,
+              height:MediaQuery.of(context).size.height/13 ,
 
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
@@ -423,50 +433,53 @@ class BodyLayout extends StatelessWidget {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width/3,
-                  child: Text(
-                    selectedItems[index],
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      widget.selectedItems[index],
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                Icon(
-                  Icons.delete,
-                  color: Colors.red,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                       onPressed:_decrementCounter,
+                      icon: Icon(Icons.remove_circle,
+                      size: 20,),
+                    ),
+                    Text(_counter.toString(),
+                      style: TextStyle(
+                        fontSize: 18
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _incrementCounter,
+                      icon: Icon(Icons.add_circle_outlined,
+                      size: 20,
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
-                  selectedItemsprice[index],
+                  '\$'+widget.selectedItemsprice[index],
                   style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold
                   ),
                 ),
-                Text('1')
+                IconButton(
+                  onPressed: _incrementCounter,
+                  icon: Icon(Icons.delete,
+                    color: Colors.red,
+                    size: 25,),
+                ),
               ],
             )
-            // ListTile(
-            //   horizontalTitleGap:MediaQuery.of(context).size.width/2 ,
-            //   title: Text(
-            //     selectedItems[index],
-            //     style: TextStyle(
-            //       fontSize: 15,
-            //       fontWeight: FontWeight.bold
-            //     ),
-            //   ),
-            //   trailing: Icon(
-            //     Icons.delete,
-            //     color: Colors.red,
-            //   ),
-            // ),
           ),
         );
       },
