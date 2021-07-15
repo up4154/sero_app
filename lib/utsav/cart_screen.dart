@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sero_app/utsav/payment_screen.dart';
@@ -25,7 +23,7 @@ class _CartScreenState extends State<CartScreen> {
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
-
+  int _counter =1;
   int table_id=0;
   String table_name='';
   setBottomBarIndex(index){
@@ -33,7 +31,17 @@ class _CartScreenState extends State<CartScreen> {
       _currentIndex = index;
     });
   }
-
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+  void _decrementCounter() {
+    setState(() {
+      if(_counter>1)
+      _counter--;
+    });
+  }
   Future<void> getSharedPrefs() async {
     setState(() {
        _isloading =true;
@@ -180,7 +188,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ]
         ),
-        toolbarHeight: 150,
+        toolbarHeight: 145,
         backgroundColor: Colors.white,
       ),
       body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
@@ -375,111 +383,36 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
-class BodyLayout extends StatefulWidget {
+class BodyLayout extends StatelessWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
   BodyLayout({ Key? key,
     required this.selectedItems
     ,required this.selectedItemsprice,}) : super(key: key);
-
-  @override
-  _BodyLayoutState createState() => _BodyLayoutState();
-}
-
-class _BodyLayoutState extends State<BodyLayout> {
-  int _counter =1;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-  void _decrementCounter() {
-    setState(() {
-      if(_counter>1)
-        _counter--;
-    });
-  }
   @override
   Widget build(BuildContext context) {
+    int _counter=1;
     return ListView.builder(
-      itemCount: widget.selectedItems.length,
+      itemCount: selectedItems.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 10,left: 8),
-          child: Container(
-              height:MediaQuery.of(context).size.height/13 ,
-
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: const Offset(
-                    1.0,
-                    1.0,
-                  ), //Offset
-                  blurRadius: 6.0,
-                  spreadRadius: 2.0,
-                ), //BoxShadow
-                BoxShadow(
-                  color: Colors.white,
-                  offset: const Offset(0.0, 0.0),
-                  blurRadius: 0.0,
-                  spreadRadius: 0.0,
-                ),],
+        return Card(
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(35),
+          ),
+          child: ListTile(
+            horizontalTitleGap:180 ,
+            title: Text(
+              selectedItems[index],
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),
             ),
-            child:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width/3,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      widget.selectedItems[index],
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                       onPressed:_decrementCounter,
-                      icon: Icon(Icons.remove_circle,
-                      size: 20,),
-                    ),
-                    Text(_counter.toString(),
-                      style: TextStyle(
-                        fontSize: 18
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: _incrementCounter,
-                      icon: Icon(Icons.add_circle_outlined,
-                      size: 20,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  '\$'+widget.selectedItemsprice[index],
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                IconButton(
-                  onPressed: _incrementCounter,
-                  icon: Icon(Icons.delete,
-                    color: Colors.red,
-                    size: 25,),
-                ),
-              ],
-            )
+            trailing: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
           ),
         );
       },

@@ -56,7 +56,7 @@ class _HomePage extends State<MyHomePage> with SingleTickerProviderStateMixin
       body: Center(child:Container(
         width: MediaQuery.of(context).size.width/1.5,
           child:Center(
-        child: Image.asset("images/x.png"),)
+        child: Image.asset("images/logo.png"),)
       ),
     ));
   }

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:sero_app/searchproduct.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -22,6 +23,8 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   TextStyle style = TextStyle(fontSize: 15.0);
+  List<String>? _selectedItems = [];
+  List<String>? _selectedItemsprice = [];
   var _datalist=[];
   var _images=[];
   var _print=[];
@@ -166,6 +169,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                              children: <Widget>[
                                GestureDetector(child:Icon(Icons.search),
                                  onTap: (){
+                                      Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => searchproduct()));
                                  },
                                ),
 
@@ -242,10 +249,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                              Icons.arrow_forward,
                            ),
                              onPressed:(){
-                               Navigator.push(
-                                   context,
-                                   MaterialPageRoute(
-                                       builder: (context) => SelectItem(category:_datalist[index])));
+
                              } ,
                            ),
                          )
@@ -253,11 +257,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                    ),
 
                ),
-               onTap:(){
+               onTap:() async {
+                 SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                 _selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
+                 print(_selectedItemsprice);
                  Navigator.push(
                      context,
                      MaterialPageRoute(
-                         builder: (context) => SelectItem(category:_datalist[index])));
+                         builder: (context) => SelectItem(category:_datalist[index],selectedItemsprice:_selectedItemsprice??[],selectedItems: _selectedItems??[],)));
                } ,
                );
              },
@@ -270,5 +277,4 @@ class _CategoryScreenState extends State<CategoryScreen> {
         // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-
 }
