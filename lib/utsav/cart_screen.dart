@@ -39,7 +39,7 @@ class _CartScreenState extends State<CartScreen> {
   void _decrementCounter() {
     setState(() {
       if(_counter>1)
-      _counter--;
+      _counter--; 
     });
   }
   Future<void> getSharedPrefs() async {
@@ -188,7 +188,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ]
         ),
-        toolbarHeight: 145,
+        toolbarHeight: 150,
         backgroundColor: Colors.white,
       ),
       body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
@@ -391,28 +391,82 @@ class BodyLayout extends StatelessWidget {
     ,required this.selectedItemsprice,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    int _counter=1;
     return ListView.builder(
       itemCount: selectedItems.length,
       itemBuilder: (context, index) {
-        return Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(35),
-          ),
-          child: ListTile(
-            horizontalTitleGap:180 ,
-            title: Text(
-              selectedItems[index],
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold
-              ),
+        return Padding(
+          padding: const EdgeInsets.only(top: 10,left: 8),
+          child: Container(
+              height:MediaQuery.of(context).size.height/14 ,
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: const Offset(
+                    1.0,
+                    1.0,
+                  ), //Offset
+                  blurRadius: 6.0,
+                  spreadRadius: 2.0,
+                ), //BoxShadow
+                BoxShadow(
+                  color: Colors.white,
+                  offset: const Offset(0.0, 0.0),
+                  blurRadius: 0.0,
+                  spreadRadius: 0.0,
+                ),],
             ),
-            trailing: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width/3,
+                  child: Text(
+                    selectedItems[index],
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+                Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+                Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+                Text(
+                  selectedItemsprice[index],
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                Text('1')
+              ],
+            )
+            // ListTile(
+            //   horizontalTitleGap:MediaQuery.of(context).size.width/2 ,
+            //   title: Text(
+            //     selectedItems[index],
+            //     style: TextStyle(
+            //       fontSize: 15,
+            //       fontWeight: FontWeight.bold
+            //     ),
+            //   ),
+            //   trailing: Icon(
+            //     Icons.delete,
+            //     color: Colors.red,
+            //   ),
+            // ),
           ),
         );
       },
