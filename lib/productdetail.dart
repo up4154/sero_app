@@ -9,7 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectItem extends StatefulWidget {
   String category;
-  SelectItem({Key ? key,required this.category});
+  List<String> selectedItems = [];
+  List<String> selectedItemsprice = [];
+  SelectItem({Key ? key,required this.category,required this.selectedItemsprice,required this.selectedItems});
 
   @override
   State<SelectItem> createState() => _SelectItemState();
@@ -62,6 +64,9 @@ class _SelectItemState extends State<SelectItem> {
     Widget build(BuildContext context) {
       return Scaffold(
           appBar: AppBar(
+            leading: IconButton(icon:Icon(Icons.arrow_back), onPressed: () async {
+              SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+            Navigator.pop(context); },),
             title: Text(widget.category), /*'Select your food item'-*/
             backgroundColor: Color(0xffffd45f),
           ),
@@ -143,6 +148,7 @@ class _SelectItemState extends State<SelectItem> {
                   if(modifiers.isEmpty)
                     {
                       _selectedItems.add(name[index]);
+                      print( _selectedItems);
                       _selectedItemsprice.add(price[index]);
                       Navigator.push(
                         context,

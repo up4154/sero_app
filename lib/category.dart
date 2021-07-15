@@ -22,6 +22,8 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   TextStyle style = TextStyle(fontSize: 15.0);
+  List<String>? _selectedItems = [];
+  List<String>? _selectedItemsprice = [];
   var _datalist=[];
   var _images=[];
   var _print=[];
@@ -242,10 +244,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                              Icons.arrow_forward,
                            ),
                              onPressed:(){
-                               Navigator.push(
-                                   context,
-                                   MaterialPageRoute(
-                                       builder: (context) => SelectItem(category:_datalist[index])));
+
                              } ,
                            ),
                          )
@@ -253,11 +252,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                    ),
 
                ),
-               onTap:(){
+               onTap:() async {
+                 SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
                  Navigator.push(
                      context,
                      MaterialPageRoute(
-                         builder: (context) => SelectItem(category:_datalist[index])));
+                         builder: (context) => SelectItem(category:_datalist[index],selectedItemsprice:_selectedItemsprice??[],selectedItems: _selectedItems??[],)));
                } ,
                );
              },
