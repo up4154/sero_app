@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:sero_app/searchproduct.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -168,6 +169,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                              children: <Widget>[
                                GestureDetector(child:Icon(Icons.search),
                                  onTap: (){
+                                      Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => searchproduct()));
                                  },
                                ),
 
@@ -254,6 +259,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                ),
                onTap:() async {
                  SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                 _selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
+                 print(_selectedItemsprice);
                  Navigator.push(
                      context,
                      MaterialPageRoute(
@@ -270,5 +277,4 @@ class _CategoryScreenState extends State<CategoryScreen> {
         // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-
 }

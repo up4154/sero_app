@@ -66,6 +66,7 @@ class _SelectItemState extends State<SelectItem> {
           appBar: AppBar(
             leading: IconButton(icon:Icon(Icons.arrow_back), onPressed: () async {
               SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+              sharedPreferences.setStringList("selected", _selectedItems);
             Navigator.pop(context); },),
             title: Text(widget.category), /*'Select your food item'-*/
             backgroundColor: Color(0xffffd45f),
@@ -86,6 +87,7 @@ class _SelectItemState extends State<SelectItem> {
                       .of(context)
                       .size
                       .height / 4,
+                  //width: 550,
                   //width: 550,
                   decoration: BoxDecoration(
                     color: Colors.white,
