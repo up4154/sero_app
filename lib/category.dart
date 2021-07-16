@@ -67,9 +67,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
    }
   Future<void> get() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    if(mounted){
     setState(() {
       _isloading=true;
-    });
+    });}
     int i=1;
     do{
     http.Response response = await http.get(
@@ -91,9 +92,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
       }
     i++;
     }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
+    if(mounted){
     setState(() {
       _isloading=false;
-    });
+    });}
   }
   @override
   void initState() {
@@ -140,8 +142,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     alignment: Alignment.topLeft,
                     icon: const Icon(Icons.menu),
                     onPressed: () {
-                      setState(() {
-                      });
                     },
                   ),
                   Text("Category",
