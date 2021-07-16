@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:sero_app/selecttable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class searchCustomer extends StatefulWidget {
   @override
   _SearchListExampleState createState() => new _SearchListExampleState();
@@ -20,6 +22,7 @@ class _SearchListExampleState extends State<searchCustomer> {
   final TextEditingController _controller = new TextEditingController();
   List<dynamic> _list=[];
   List<dynamic> _phone=[];
+  List searchname = [];
   bool _isSearching=false;
   String _searchText = "";
   List searchresult = [];
@@ -89,8 +92,24 @@ class _SearchListExampleState extends State<searchCustomer> {
                       String listData = searchresult[index];
                       return new ListTile(
                         title: new Text(listData.toString()),
-                        onTap: (){
+                        onTap: () async {
                           print(searchresult[index] +" is selected");
+                          if(searchresult[index].toString().contains("(")){print("Yes");
+                          String v=searchresult[index].toString().substring(0,searchresult[index].toString().indexOf("("));
+                          print(v);
+                          SharedPreferences prefs= await SharedPreferences.getInstance();
+                          prefs.setString("customer_name", v);
+                          }
+                          else {
+                            SharedPreferences prefs = await SharedPreferences
+                                .getInstance();
+                            prefs.setString("customer_name",
+                                searchresult[index]);
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SelectTable()),
+                          );
                         },
                       );
                     },
@@ -102,8 +121,14 @@ class _SearchListExampleState extends State<searchCustomer> {
                       String listData = _list[index];
                       return new ListTile(
                         title: new Text(listData.toString()),
-                        onTap: (){
+                        onTap: () async {
                           print(listData.toString() +" is selected");
+                          SharedPreferences prefs= await SharedPreferences.getInstance();
+                          prefs.setString("customer_name", listData);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SelectTable()),
+                          );
                         },
                       );
                     },
@@ -181,6 +206,7 @@ class _SearchListExampleState extends State<searchCustomer> {
             String data = _phone[i];
             if (data.toLowerCase().contains(searchText.toLowerCase())) {
               searchresult.add(_list[i]+"("+data+")");
+              searchname.add(_list[i]);
             }
         }
     }

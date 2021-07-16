@@ -20,17 +20,37 @@ class SelectItem extends StatefulWidget {
 class _SelectItemState extends State<SelectItem> {
     var v;
     //List<String> selectedReportList = [];
+    bool _isSearching=false;
+    List<String> searchresult = [];
+    List<String> searchresultImages = [];
     List<String> images = [];
     List<String> price=[];
     List<String> _selectedItems = [];
     List<String> _selectedItemsprice = [];
+    TextEditingController _controller=new TextEditingController();
     List<String> name = [];
     List<String> id = [];
     bool _isloading = false;
+    var _searchText;
     Future<void> get() async {
       setState(() {
         _isloading = true;
       });
+      _SelectItemState() {
+        _controller.addListener(() {
+          if (_controller.text.isEmpty) {
+            setState(() {
+              _isSearching = false;
+              _searchText = "";
+            });
+          } else {
+            setState(() {
+              _isSearching = true;
+              _searchText = _controller.text;
+            });
+          }
+        });
+      }
       int i=1;
       SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
       do{
@@ -60,18 +80,227 @@ class _SelectItemState extends State<SelectItem> {
       get();
       super.initState();
     }
+    void _handleSearchStart() {
+      setState(() {
+        _isSearching = true;
+      });
+    }
+    void searchOperation(String searchText) {
+      searchresult.clear();
+      if (_isSearching != null) {
+        for (int i = 0; i < name.length; i++) {
+          String data = name[i];
+          if (data.toLowerCase().contains(searchText.toLowerCase())) {
+            searchresult.add(data);
+            searchresultImages.add(images[i]);
+          }
+        }
+      }}
     @override
     Widget build(BuildContext context) {
       return Scaffold(
           appBar: AppBar(
-            leading: IconButton(icon:Icon(Icons.arrow_back), onPressed: () async {
-              SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-              sharedPreferences.setStringList("selected", _selectedItems);
-            Navigator.pop(context); },),
-            title: Text(widget.category), /*'Select your food item'-*/
-            backgroundColor: Color(0xffffd45f),
+            flexibleSpace:  Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(bottomLeft:Radius.circular(30),bottomRight:Radius.circular(30),),
+                      color :const Color(0xffffd45f),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: const Offset(
+                            1.0,
+                            1.0,
+                          ), //Offset
+                          blurRadius: 0.0,
+                          spreadRadius: 2.0,
+                        ), //BoxShadow
+                        BoxShadow(
+                          color: Colors.white,
+                          offset: const Offset(0.0, 0.0),
+                          blurRadius: 0.0,
+                          spreadRadius: 0.0,
+                        ),],
+                    ),
+                    height:150,
+                    child:Padding(
+                      padding: const EdgeInsets.only(top:30),
+                      child: Column(
+                        children:[Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              IconButton(
+                                alignment: Alignment.topLeft,
+                                icon: const Icon(Icons.menu),
+                                onPressed: () {
+                                },
+                              ),
+                              Text(widget.category,
+                                style: TextStyle(fontSize: 23,fontWeight: FontWeight.w500),),
+                              CircleAvatar(
+                                  backgroundImage: NetworkImage('https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
+                              ),
+                            ]),
+                          /*Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [*/
+                          Container(
+                            width: MediaQuery.of(context).size.width/1.3,
+                            child:
+                            Material(
+                              elevation: 5.0,
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Colors.white,
+                              child: MaterialButton(
+                                minWidth:MediaQuery.of(context).size.width/3,
+                                height: MediaQuery.of(context).size.height/20,
+                                padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                onPressed: () {},
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      height: MediaQuery.of(context).size.height/20,
+                                      width: MediaQuery.of(context).size.width/1.6,
+                                      child:TextField(
+                                          controller: _controller,
+                                          cursorColor: Colors.black,
+                                          decoration: InputDecoration(
+                                              fillColor: Colors.black,
+                                              focusColor: Colors.black,
+                                              hoverColor: Colors.black,
+                                              hintText: "Search..",
+                                              focusedBorder: UnderlineInputBorder(
+                                                  borderSide: BorderSide(color: Colors.black)
+                                              ),
+                                              prefixIcon: Icon(
+                                                Icons.search,color: Colors.black,
+                                              ),
+
+
+                                          ),
+                                          onChanged: (value){
+                                            _handleSearchStart();
+                                            searchOperation(value);
+                                          }
+                                      ),),
+
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                            //],
+                            //)
+                          )],
+                      ),
+                    ),
+                  ),
+                ]
+            ),
+            toolbarHeight: 130,
+            backgroundColor: Colors.white,
           ),
-          body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):GridView.builder(
+            /*'Select your food item'-*/
+
+          body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):searchresult.length != 0 || _controller.text.isNotEmpty?
+          GridView.builder(
+              primary: false,
+              padding: const EdgeInsets.all(10),
+              itemCount: searchresult.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 25.0,
+                mainAxisSpacing: 25.0,
+
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(child: Container(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 4,
+                  //width: 550,
+                  //width: 550,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Container(
+                        child: CircleAvatar(
+                            backgroundImage: NetworkImage(searchresultImages[index])
+                        ),),
+                      Container(
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height / 25,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: Text(
+                          searchresult[index],
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                        ),),
+                    ],
+                  ),
+                ),
+                    onTap: () async {
+                      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                      print(id[index]);
+                      http.Response response = await http.get(
+                          Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
+                          , headers: {
+                        'Authorization':
+                        sharedPreferences.getString("Authorization") ?? ''
+
+                      });
+                      var v = (json.decode(response.body));
+                      //print(v["data"][0]["modifiers"]);
+                      List<dynamic> check=v["data"][0]["modifiers"];
+                      List<String> modifiers=[];
+                      if(!check.isEmpty){
+                        for (var _mod in v["data"][0]["modifiers"][0]) {
+                          print(_mod["name"]);
+                          modifiers.add(_mod["name"]);
+                        }
+                      }
+                      if(modifiers.isEmpty)
+                      {
+                        _selectedItems.add(searchresult[index]);
+                        print( _selectedItems);
+                        _selectedItemsprice.add(price[index]);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CartScreen(selectedItems: _selectedItems,selectedItemsprice: _selectedItemsprice,)),
+                        );
+                      }
+                      else {
+                        showDialog(context: context, builder: (context) {
+                          return add(modifiers: modifiers);
+                        });
+                      }
+                    }
+                );
+              }):GridView.builder(
               primary: false,
               padding: const EdgeInsets.all(10),
               itemCount: images.length,
@@ -163,240 +392,9 @@ class _SelectItemState extends State<SelectItem> {
                     });
                   }
                   }
-
-                    /*showDialog(context: context, builder: (context)
-              {
-                return Container(
-                    padding: EdgeInsets.only(left:20,right: 20),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height/4,
-                          width: MediaQuery.of(context).size.height/2 ,
-                          color: Colors.white,
-                          child: ,
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height/4,
-                          color: Colors.white,
-                        ),
-                       Material(
-                         borderRadius: BorderRadius.circular(20),
-                           child:MaterialButton(onPressed:(){print("Hi");},
-                       child: Icon(Icons.arrow_forward),
-                         color: Color(0xfffdd460),
-                      ))
-                      ],
-                    ));
-              });*/
-                    /*showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          //Here we will build the content of the dialog
-                          return Column(children: [
-                            Dialog(
-                                child: Padding(padding: EdgeInsets.all(30),
-                                    child: Column(children: [
-                                      Center(child: Text("MODIFIERS",
-                                        style: TextStyle(
-                                            color: Colors.pink),),),
-                                      Container(
-                                        //backgroundColor: Colors.white,
-                                        child: MultiSelectChip(
-                                          reportList,
-                                          onSelectionChanged: (selectedList) {
-                                            setState(() {
-                                              selectedReportList = selectedList;
-                                            });
-                                          },
-
-                                        ),
-
-                                      )
-                                    ]))),
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50)
-                              ),
-                              child: AlertDialog(
-                                title: Text("Addons",),
-                                content: MultiSelectChip(
-                                  reportList,
-                                  onSelectionChanged: (selectedList) {
-                                    setState(() {
-                                      selectedReportList = selectedList;
-                                    });
-                                  },
-                                ),
-
-                              ),),
-
-                            FlatButton(
-                              color: Color(0xfffdd460),
-                              child: Icon(Icons.arrow_forward),
-                              onPressed: () => Navigator.of(context).pop(),
-                            )
-                          ]);
-                        });*/
-                    /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => add()));
-            }
-            );*/
-
-
-                  /*
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/thai food.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Thai",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/noodles.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Noodles",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 6,
-                  ),
-                  new SvgPicture.asset(
-                    'asset/fried rice.svg',
-                    height: 60.0,
-                    width: 60.0,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "Chinese",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-          ],*/
                 );
-              }));
+              })
+      );
     }
   }
 
-// class ContainerEdit extends StatefulWidget {
-//   ContainerEdit({@required this.text, @required this.img});
-//   final String text;
-//   final Image img;
-//   @override
-//   _ContainerEditState createState() => _ContainerEditState();
-// }
-//
-// class _ContainerEditState extends State<ContainerEdit> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.grey.withOpacity(0.5),
-//             spreadRadius: 5,
-//             blurRadius: 7,
-//             offset: Offset(0, 3), // changes position of shadow
-//           ),
-//         ],
-//       ),
-//       padding: const EdgeInsets.all(8),
-//       child: Column(
-//         children: <Widget>[
-//           SizedBox(
-//             height: 6,
-//           ),
-//           new SvgPicture.asset(
-//             'img',
-//             height: 60.0,
-//             width: 60.0,
-//           ),
-//           SizedBox(
-//             height: 4,
-//           ),
-//           Text(
-//             widget.text,
-//             style: TextStyle(color: Colors.black, fontSize: 20),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

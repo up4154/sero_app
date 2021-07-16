@@ -22,9 +22,14 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
+  final TextEditingController _controller = new TextEditingController();
+  List<dynamic> _list=[];
+  bool _isSearching=false;
+  List<String> searchresult = [];
   TextStyle style = TextStyle(fontSize: 15.0);
   List<String>? _selectedItems = [];
   List<String>? _selectedItemsprice = [];
+  var _searchText;
   var _datalist=[];
   var _images=[];
   var _print=[];
@@ -32,6 +37,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
   var v;
   bool value = false;
   bool value1 = false;
+  _CategoryScreenState() {
+    _controller.addListener(() {
+      if (_controller.text.isEmpty) {
+        setState(() {
+          _isSearching = false;
+          _searchText = "";
+        });
+      } else {
+        setState(() {
+          _isSearching = true;
+          _searchText = _controller.text;
+        });
+      }
+    });
+  }
   Future<void> _scanQR() async {
       String barcodeScanRes;
       // Platform messages may fail, so we use a try/catch PlatformException.
@@ -67,9 +87,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
    }
   Future<void> get() async {
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    if(mounted){
     setState(() {
       _isloading=true;
-    });
+    });}
     int i=1;
     do{
     http.Response response = await http.get(
@@ -91,13 +112,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
       }
     i++;
     }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
+    if(mounted){
     setState(() {
       _isloading=false;
+    });}
+  }
+  void _handleSearchStart() {
+    setState(() {
+      _isSearching = true;
     });
   }
+  void searchOperation(String searchText) {
+    searchresult.clear();
+    if (_isSearching != null) {
+      for (int i = 0; i < _datalist.length; i++) {
+        String data = _datalist[i];
+        if (data.toLowerCase().contains(searchText.toLowerCase())) {
+          searchresult.add(data);
+        }
+      }
+    }}
   @override
   void initState() {
     get();
+    _isSearching = false;
     super.initState();
   }
   @override
@@ -140,8 +178,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     alignment: Alignment.topLeft,
                     icon: const Icon(Icons.menu),
                     onPressed: () {
-                      setState(() {
-                      });
                     },
                   ),
                   Text("Category",
@@ -162,31 +198,59 @@ class _CategoryScreenState extends State<CategoryScreen> {
                          color: Colors.white,
                          child: MaterialButton(
                            minWidth:MediaQuery.of(context).size.width/3,
+                           height: MediaQuery.of(context).size.height/20,
                            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                            onPressed: () {},
                            child: Row(
                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                              children: <Widget>[
-                               GestureDetector(child:Icon(Icons.search),
-                                 onTap: (){
-                                      Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                      builder: (context) => searchproduct()));
-                                 },
-                               ),
+                               Container(
+                                 height: MediaQuery.of(context).size.height/20,
+                                 width: MediaQuery.of(context).size.width/1.6,
+                                 child:TextField(
+                                   controller: _controller,
+                                   cursorColor: Colors.black,
+                                 decoration: InputDecoration(
+                                   fillColor: Colors.black,
+                                   focusColor: Colors.black,
+                                   hoverColor: Colors.black,
+                                   hintText: "Search..",
+                                   focusedBorder: UnderlineInputBorder(
+                                     borderSide: BorderSide(color: Colors.black)
+                                   ),
+                                   prefixIcon: Icon(
+                                     Icons.search,color: Colors.black,
+                                   ),
 
-                               Text(
-                                 "Search Product",
-                                 textAlign: TextAlign.center,
-                                 style: TextStyle(
-                                   fontSize: 15,
+                                   suffixIcon: IconButton(
+                                     icon:Icon(Icons.qr_code),
+                                     onPressed:_scanQR,
+                                     color: Colors.black,
+                                   )
                                  ),
-                               ),
+                                   onChanged: (value){
+                                     _handleSearchStart();
+                                     searchOperation(value);
+                                   }
+                               ),),
+                               // GestureDetector(child:Icon(Icons.search),
+                               //   onTap: (){
+                               //        Navigator.push(
+                               //        context,
+                               //        MaterialPageRoute(
+                               //        builder: (context) => searchproduct()));
+                               //   },
+                               // ),
+                               //
+                               // Text(
+                               //   "Search Category",
+                               //   textAlign: TextAlign.center,
+                               //   style: TextStyle(
+                               //     fontSize: 15,
+                               //   ),
+                               // ),
 
-                               GestureDetector(child:Icon(Icons.qr_code),
-                                 onTap: _scanQR,
-                               ),
+
                              ],
                            ),
                          ),
@@ -199,12 +263,84 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
         ]
     ),
-    toolbarHeight: 130,
+      toolbarHeight: 130,
     backgroundColor: Colors.white,
     ),
       body: _isloading?Center(
-          child: CircularProgressIndicator(color: Color(0xff000066),)):Center(
-        child: ListView.builder(
+          child: CircularProgressIndicator(color: Color(0xff000066),)):searchresult.length != 0 || _controller.text.isNotEmpty?
+      Center(
+        child:ListView.builder(
+          itemCount: searchresult.length,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(child:Container(
+              height: MediaQuery.of(context).size.height/10,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: const Offset(
+                        2.0,
+                        2.0,
+                      ),
+                      blurRadius: 2.0,
+                      spreadRadius: 1.0,
+                    ),
+                  ]//BoxShadow
+              ),
+              margin: EdgeInsets.all(10),
+              width: MediaQuery.of(context).size.width/1.5,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    //child:Image.network(_images[index],height: 30,width:MediaQuery.of(context).size.width/4.5,)),
+                    /* SizedBox(
+                           width: 15,
+                         ),*/),
+                  Container(
+                      width: MediaQuery.of(context).size.width/3,
+                      child:Text(searchresult[index],
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: style.copyWith(color: Colors.black))),
+                  /*SizedBox(
+                           width:50,
+                         ),*/
+                  Container(
+                    width: MediaQuery.of(context).size.width/3,
+                    child:  IconButton(icon:Icon(
+                      Icons.arrow_forward,
+                    ),
+                      onPressed:(){
+
+                      } ,
+                    ),
+                  )
+                ],
+              ),
+
+            ),
+              onTap:() async {
+                SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                _selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
+                print(_selectedItemsprice);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelectItem(category:searchresult[index],selectedItemsprice:_selectedItemsprice??[],selectedItems: _selectedItems??[],)));
+              } ,
+            );
+          },
+          // SizedBox(
+          //   height: 20,
+          // ),
+
+        ),
+      )://No search found then
+      Center(
+        child:ListView.builder(
             itemCount: _datalist.length,
              itemBuilder: (BuildContext context, int index) {
                return GestureDetector(child:Container(
@@ -276,5 +412,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
     );
+
   }
 }

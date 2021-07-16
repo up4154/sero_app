@@ -17,6 +17,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
+  String customer_name="";
   double paymentAmount=200.00;
   double discount =0.0;
   bool _isloading =false;
@@ -39,6 +40,7 @@ class _CartScreenState extends State<CartScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     table_id=  prefs.getInt("table_id")!;
     table_name =prefs.getString("table_name")!;
+    customer_name=prefs.getString("customer_name")!;
     setState(() {
       _isloading =false;
     });
@@ -167,7 +169,7 @@ class _CartScreenState extends State<CartScreen> {
                               fontWeight: FontWeight.w500,
                               fontSize: 15
                           ),),
-                        Text('John Smith',
+                        Text(customer_name,
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15
