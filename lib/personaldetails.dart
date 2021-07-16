@@ -180,12 +180,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                             height: 10,
                           ),
                           TextFormField(
-                            validator: (value)
-                            {
-                              if(value!.isEmpty){
-                                return "This field cannot be empty";}
-                              return null;
-                            },
                             controller: mname,
                             decoration: InputDecoration(
                               hintText: "Middle Name",
@@ -221,12 +215,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                             height: 10,
                           ),
                           TextFormField(
-                            validator: (value)
-                            {
-                              if(value!.isEmpty){
-                                return "This field cannot be empty";}
-                              return null;
-                            },
                             controller: lname,
                             decoration: InputDecoration(
                               hintText: "Last Name",
@@ -445,8 +433,8 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                           input={
                             "type": "customer",
                             "first_name": fname.text,
-                            "middle_name": mname.text,
-                            "last_name": lname.text,
+                            "middle_name": mname.text??'',
+                            "last_name": lname.text??'',
                             "mobile": phone_number.text,
                             "address_line_1": address.text,
                             "city": cityValue??'',
