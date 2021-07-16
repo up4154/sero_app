@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isloading = true;
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setStringList("selected", []);
     var Response = await http.get(
         Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),
         headers: {

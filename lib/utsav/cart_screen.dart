@@ -41,6 +41,7 @@ class _CartScreenState extends State<CartScreen> {
     table_id=  prefs.getInt("table_id")!;
     table_name =prefs.getString("table_name")!;
     customer_name=prefs.getString("customer_name")!;
+    selectedItems=prefs.getStringList("selected")!;
     setState(() {
       _isloading =false;
     });
