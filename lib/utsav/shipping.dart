@@ -32,6 +32,9 @@ class _ShippingState extends State<Shipping> {
 
   String totalAmounttype(){
     shipAmount =double.parse(_shipChargeController.text);
+    if(_packageChargeController.text == null){
+      _packageChargeController.text ="0.0";
+    }
     packageAmount =double.parse(_packageChargeController.text);
     double totalAmount = (widget.Balance + shipAmount+packageAmount);
     setState(() {
@@ -130,12 +133,6 @@ class _ShippingState extends State<Shipping> {
                           child: Form(
                             key: _formKey,
                             child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter the packaging cost';
-                                }
-                                return null;
-                              },
                               controller: _packageChargeController,
                               keyboardType:TextInputType.number,
                               decoration: InputDecoration(
@@ -235,7 +232,7 @@ class _ShippingState extends State<Shipping> {
                                 ),
                                 onTap: (){
                                   setState(() {
-                                    if(_forKey.currentState!.validate()&&_formKey.currentState!.validate()){
+                                    if(_forKey.currentState!.validate()){
                                     totalAmounttype();
                                     Navigator.push(
                                       context,

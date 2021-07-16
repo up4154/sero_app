@@ -31,7 +31,7 @@ class _RedeemPointState extends State<RedeemPoint> {
 
   String totalAmounttype(){
     redeemAmount =int.parse(pointscontroller.text) ;
-    double totalAmount = (widget.Balance - redeemAmount);
+    double totalAmount = (widget.Balance - redeemAmount-widget.Discountt);
     setState(() {
       redeemedAmount =totalAmount.toStringAsFixed(2);
     });
