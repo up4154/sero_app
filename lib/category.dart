@@ -395,7 +395,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                ),
                onTap:() async {
                  SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-                 _selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
+                 //_selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
                  print(_selectedItemsprice);
                  Navigator.push(
                      context,

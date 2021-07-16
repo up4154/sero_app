@@ -378,8 +378,13 @@ class _SelectItemState extends State<SelectItem> {
                   }
                   if(modifiers.isEmpty)
                     {
+                      var list=sharedPreferences.getStringList("selected");
                       _selectedItems.add(name[index]);
-                      print( _selectedItems);
+                      list!.addAll(_selectedItems);
+                      sharedPreferences.setStringList("selected", []);
+                      sharedPreferences.setStringList("selected", list);
+                      print(sharedPreferences.getStringList("selected"));
+                      //print( _selectedItems);
                       _selectedItemsprice.add(price[index]);
                       Navigator.push(
                         context,
