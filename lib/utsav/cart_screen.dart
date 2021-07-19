@@ -24,7 +24,6 @@ class _CartScreenState extends State<CartScreen> {
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
-
   int table_id=0;
   String table_name='';
   setBottomBarIndex(index){
@@ -53,6 +52,10 @@ class _CartScreenState extends State<CartScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      selectedItems.clear();
+    });
+
     selectedItems =widget.selectedItems;
     selectedItemsprice =widget.selectedItemsprice;
     size = MediaQuery.of(context).size;
@@ -65,47 +68,64 @@ class _CartScreenState extends State<CartScreen> {
           child: Container(
             height: 70,
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // button 1
+                    IconButton(
+                      icon: Icon(Icons.home_sharp,
+                        color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
+                      ),
+                      onPressed: (){
+                        setBottomBarIndex(0);
+                      },
+                      splashColor: Colors.white,
+                    ),
 
-                // button 1
-                IconButton(
-                  icon: Icon(Icons.home_sharp,
-                    color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(0);
-                  },
-                  splashColor: Colors.white,
+                    // button 2
+                    IconButton(
+                        icon: Icon(Icons.border_all_rounded,
+                          color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
+                        ),
+                        onPressed: (){
+                          setBottomBarIndex(1);
+                        }),
+
+                    // button 3
+                    IconButton(
+                        icon: Icon(Icons.shopping_cart,
+                          color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
+                        ),
+                        onPressed: (){
+                          setBottomBarIndex(2);
+                        }),
+
+                    // button 4
+                    IconButton(
+                        icon: Icon(Icons.open_in_browser_sharp,
+                          color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
+                        ),
+                        onPressed: () async {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          table_id=  prefs.getInt("table_id")!;
+                          table_name =prefs.getString("table_name")!;
+                          customer_name=prefs.getString("customer_name")!;
+                          selectedItems=prefs.getStringList("selected")!;
+                          setState(() {
+                            _currentIndex =0;
+
+                            setState(() {
+                              _isloading =false;
+                            });
+                            setState(() {
+                              setBottomBarIndex(3);
+                            });
+                          });
+                        }),
+                  ],
                 ),
-
-                // button 2
-                IconButton(
-                    icon: Icon(Icons.border_all_rounded,
-                      color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                    ),
-                    onPressed: (){
-                      setBottomBarIndex(1);
-                    }),
-
-                // button 3
-                IconButton(
-                    icon: Icon(Icons.shopping_cart,
-                      color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                    ),
-                    onPressed: (){
-                      setBottomBarIndex(2);
-                    }),
-
-                // button 4
-                IconButton(
-                    icon: Icon(Icons.open_in_browser_sharp,
-                      color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                    ),
-                    onPressed: (){
-                      setBottomBarIndex(3);
-                    }),
               ],
             ),
           ),
@@ -153,7 +173,8 @@ class _CartScreenState extends State<CartScreen> {
                         Text("ORDER",
                           style: TextStyle(fontSize: 23,fontWeight: FontWeight.w500),),
                         CircleAvatar(
-                            backgroundImage: NetworkImage('https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
+                            backgroundImage:
+                            NetworkImage('https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
                         ),
                       ],
                     ),
@@ -184,7 +205,8 @@ class _CartScreenState extends State<CartScreen> {
           toolbarHeight: 170,
           backgroundColor: Colors.white,
         ),
-        body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
+        body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),))
+            :BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
         bottomSheet:_currentIndex == 3 ? new Container(
           height: 70,
           decoration: BoxDecoration(
@@ -272,8 +294,7 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   IconButton(
                     onPressed:(){
-                      setState(() {
-                      });
+
                     },
                     iconSize: 25,
                     icon: Icon(Icons.clear_all_sharp,
@@ -290,9 +311,26 @@ class _CartScreenState extends State<CartScreen> {
               Column(
                 children: [
                   IconButton(
-                    onPressed:(){
+                    onPressed:()async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      table_id=  prefs.getInt("table_id")!;
+                      table_name =prefs.getString("table_name")!;
+                      customer_name=prefs.getString("customer_name")!;
+                      selectedItems=prefs.getStringList("selected")!;
                       setState(() {
-                        Navigator.pop(context);
+                        _currentIndex =0;
+
+                        setState(() {
+                          _isloading =false;
+                        });
+                        setState(() {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CartScreen(selectedItems: prefs.getStringList("selected")?? [],selectedItemsprice:[],)),
+                          );
+
+                        });
                       });
                     },
                     iconSize: 40,
@@ -384,112 +422,119 @@ class BodyLayout extends StatefulWidget {
     ,required this.selectedItemsprice,}) : super(key: key);
 
   @override
-  _BodyLayoutState createState() => _BodyLayoutState();
+  _BodyLayoutState createState() => _BodyLayoutState(selectedItems);
 }
 
 class _BodyLayoutState extends State<BodyLayout> {
+  _BodyLayoutState(List<String> selectedItems);
+  List<String> selectedItems = [];
   int _counter =1;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-  void _decrementCounter() {
-    setState(() {
-      if(_counter>1)
-        _counter--;
-    });
-  }
+  List<int> counterList =[];
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.selectedItems.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
-          child: Container(
-              height:MediaQuery.of(context).size.height/10 ,
-              padding: EdgeInsets.only(left:10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: const Offset(
-                      1.0,
-                      1.0,
-                    ), //Offset
-                    blurRadius: 6.0,
-                    spreadRadius: 2.0,
-                  ), //BoxShadow
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: const Offset(0.0, 0.0),
-                    blurRadius: 0.0,
-                    spreadRadius: 0.0,
-                  ),],
-              ),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width/2.8,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 0),
-                      child: Text(
-                        widget.selectedItems[index],
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold
+    _counter=widget.selectedItems.length;
+    return Container(
+      height: MediaQuery.of(context).size.height/1.95,
+      child: ListView.builder(
+        itemCount: widget.selectedItems.length,
+        itemBuilder: (context, index) {
+          if(counterList.length < widget.selectedItems.length ) {
+            counterList.insert(index,1);
+          }
+          return Padding(
+            padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
+            child: Container(
+                height:MediaQuery.of(context).size.height/10 ,
+                padding: EdgeInsets.only(left:10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: const Offset(
+                        1.0,
+                        1.0,
+                      ), //Offset
+                      blurRadius: 6.0,
+                      spreadRadius: 2.0,
+                    ), //BoxShadow
+                    BoxShadow(
+                      color: Colors.white,
+                      offset: const Offset(0.0, 0.0),
+                      blurRadius: 0.0,
+                      spreadRadius: 0.0,
+                    ),],
+                ),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width/2.8,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 0),
+                        child: Text(
+                          widget.selectedItems[index],
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Row(
-                    //mainAxisAlignment: MainAxisAlignment.,
-                    children: [
-                      IconButton(
-                        onPressed:_decrementCounter,
-                        icon: Icon(Icons.remove_circle,
-                          size: 17,),
-                      ),
-                      Text(_counter.toString(),
-                        style: TextStyle(
-                            fontSize: 15
+                    Row(
+                      //mainAxisAlignment: MainAxisAlignment.,
+                      children: [
+                        IconButton(
+                          onPressed:(){
+                            setState(() {
+                              if(counterList[index]>1)
+                                counterList[index]--;
+                            });
+                          },
+                          icon: Icon(Icons.remove_circle,
+                            size: 17,),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: _incrementCounter,
-                        icon: Icon(Icons.add_circle_outlined,
-                          size: 17,
+                        Text(counterList[index].toString(),
+                          style: TextStyle(
+                              fontSize: 15
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                      width: MediaQuery.of(context).size.width/9,
-                      child:Text(
-                        '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold
+                        IconButton(
+                          onPressed:(){
+                            setState(() {
+                              counterList[index]++;
+                            });
+                          },
+                          icon: Icon(Icons.add_circle_outlined,
+                            size: 17,
+                          ),
                         ),
-                      )),
-                  IconButton(
-                    onPressed: _incrementCounter,
-                    icon: Icon(Icons.delete,
-                      color: Colors.red,
-                      size: 25,),
-                  ),
-                ],
-              )
-          ),
-        );
-      },
+                      ],
+                    ),
+                    // Container(
+                    //     width: MediaQuery.of(context).size.width/9,
+                    //     child:Text(
+                    //       '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
+                    //       style: TextStyle(
+                    //           fontSize: 15,
+                    //           fontWeight: FontWeight.bold
+                    //       ),
+                    //     )),
+                    IconButton(
+                      onPressed:(){
+
+                      },
+                      icon: Icon(Icons.delete,
+                        color: Colors.red,
+                        size: 25,),
+                    ),
+                  ],
+                )
+            ),
+          );
+        },
+      ),
     );
   }
 }
-
-
-
 

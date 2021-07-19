@@ -26,20 +26,26 @@ class _ShippingState extends State<Shipping> {
   bool isClickedCancel = true;
   String shippingCharge ='0';
   final _shipChargeController = new TextEditingController();
-  final _packageChargeController = new TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  TextEditingController _packageChargeController = new TextEditingController();
+  // final _formKey = GlobalKey<FormState>();
   final _forKey = GlobalKey<FormState>();
 
   String totalAmounttype(){
     shipAmount =double.parse(_shipChargeController.text);
-    if(_packageChargeController.text == null){
-      _packageChargeController.text ="0.0";
+    if(_packageChargeController.text != ''){
+      packageAmount =double.parse(_packageChargeController.text);
+      double totalAmount = (widget.Balance + shipAmount+packageAmount);
+      setState(() {
+        shippingCharge =totalAmount.toStringAsFixed(2);
+      });
     }
-    packageAmount =double.parse(_packageChargeController.text);
-    double totalAmount = (widget.Balance + shipAmount+packageAmount);
-    setState(() {
-      shippingCharge =totalAmount.toStringAsFixed(2);
-    });
+    else{
+      double totalAmount = (widget.Balance + shipAmount);
+      setState(() {
+        shippingCharge =totalAmount.toStringAsFixed(2);
+      });
+    }
+
     return shippingCharge;
   }
   @override
@@ -130,25 +136,20 @@ class _ShippingState extends State<Shipping> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top:4,left: 45,bottom: 20,right: 45),
-                          child: Form(
-                            key: _formKey,
-                            child: TextFormField(
-                              controller: _packageChargeController,
-                              keyboardType:TextInputType.number,
-                              decoration: InputDecoration(
-                                fillColor: Colors.white, filled: true,
-                                errorStyle: TextStyle(color: Color(0xFFFFD45F),fontWeight: FontWeight.bold,fontSize: 12),
-
-                                prefix:  Text('\$'),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color:Colors.brown),
-                                ),
-                                hintText: 'Enter Packaging Cost here',
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color:Colors.brown),
-                                ),
+                          child: TextFormField(
+                            controller: _packageChargeController,
+                            keyboardType:TextInputType.number,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white, filled: true,
+                              prefix:  Text('\$'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(color:Colors.brown),
+                              ),
+                              hintText: 'Enter Packaging Cost here',
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(color:Colors.brown),
                               ),
                             ),
                           ),
@@ -223,7 +224,7 @@ class _ShippingState extends State<Shipping> {
                                   ),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isClickedAdd ? Colors.white : Color(0xFFFFD45F),
+                                    color:Color(0xFFFFD45F),
                                     borderRadius: BorderRadius.circular(45),
 
                                   ),
@@ -250,7 +251,7 @@ class _ShippingState extends State<Shipping> {
 
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isClickedCancel ? Colors.white : Color(0xFFFFD45F),
+                                    color:  Color(0xFFFFD45F),
                                     borderRadius: BorderRadius.circular(45),
                                   ),
                                   height: 60,
@@ -272,6 +273,6 @@ class _ShippingState extends State<Shipping> {
             ),
           ),
         )
-    );;
+    );
   }
 }
