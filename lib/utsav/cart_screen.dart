@@ -41,6 +41,7 @@ class _CartScreenState extends State<CartScreen> {
     table_id=  prefs.getInt("table_id")!;
     table_name =prefs.getString("table_name")!;
     customer_name=prefs.getString("customer_name")!;
+    selectedItems=prefs.getStringList("selected")!;
     setState(() {
       _isloading =false;
     });
@@ -466,14 +467,14 @@ class _BodyLayoutState extends State<BodyLayout> {
                     ],
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width/9,
+                      width: MediaQuery.of(context).size.width/9,
                       child:Text(
-                    '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                    ),
-                  )),
+                        '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold
+                        ),
+                      )),
                   IconButton(
                     onPressed: _incrementCounter,
                     icon: Icon(Icons.delete,
@@ -488,6 +489,7 @@ class _BodyLayoutState extends State<BodyLayout> {
     );
   }
 }
+
 
 
 

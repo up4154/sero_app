@@ -33,6 +33,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   var _datalist=[];
   var _images=[];
   var _print=[];
+  int _currentIndex = 0;
   bool _isloading=false;
   var v;
   bool value = false;
@@ -132,6 +133,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
         }
       }
     }}
+  setBottomBarIndex(index) {
+    setState(() {
+      _currentIndex = index;
+    });}
   @override
   void initState() {
     get();
@@ -141,6 +146,57 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:BottomAppBar(
+        color: Colors.white,
+        shape: CircularNotchedRectangle(),
+        child: Container(
+          height: 70,
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              // button 1
+              IconButton(
+                icon: Icon(Icons.home_sharp,
+                  color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
+                ),
+                onPressed: (){
+                  setBottomBarIndex(0);
+                },
+                splashColor: Colors.white,
+              ),
+
+              // button 2
+              IconButton(
+                  icon: Icon(Icons.border_all_rounded,
+                    color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
+                  ),
+                  onPressed: (){
+                    setBottomBarIndex(1);
+                  }),
+
+              // button 3
+              IconButton(
+                  icon: Icon(Icons.shopping_cart,
+                    color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
+                  ),
+                  onPressed: (){
+                    setBottomBarIndex(2);
+                  }),
+
+              // button 4
+              IconButton(
+                  icon: Icon(Icons.open_in_browser_sharp,
+                    color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
+                  ),
+                  onPressed: (){
+                    setBottomBarIndex(3);
+                  }),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
     flexibleSpace:  Column(
     mainAxisAlignment: MainAxisAlignment.start,
@@ -395,7 +451,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                ),
                onTap:() async {
                  SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-                 _selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
+                 //_selectedItemsprice!.addAll(sharedPreferences.getStringList("selected")??[]);
                  print(_selectedItemsprice);
                  Navigator.push(
                      context,

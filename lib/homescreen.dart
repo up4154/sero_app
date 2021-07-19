@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/personaldetails.dart';
 import 'package:sero_app/selecttable.dart';
 import 'package:sero_app/forget_password.dart';
@@ -19,10 +21,21 @@ class _HomeScreenState extends State<HomeScreen> {
   TextStyle style = TextStyle(fontSize: 20.0);
   bool value = false;
   bool value1 = false;
+  String _selectedAnimal="";
   int _currentIndex = 0;
   bool _isloading = false;
   late String _name;
+  final List<String> _suggestions = [
+    'Alligator',
+    'Buffalo',
+    'Chicken',
+    'Dog',
+    'Eagle',
+    'Frog'
+  ];
 
+  final TextEditingController _typeAheadController = TextEditingController();
+  String _selectedCity="";
   fetch()
 
   async {
@@ -30,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isloading = true;
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setStringList("selected", []);
     var Response = await http.get(
         Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),
         headers: {
@@ -110,14 +124,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body:  _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):Padding(
-          padding: const EdgeInsets.all(36.0),
+          padding: const EdgeInsets.only(left: 15,right: 15),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 SizedBox(
-                  height: 80,
+                  height: 40,
                 ),
                 Image.asset(
                   'images/x.png',
@@ -144,40 +158,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     minWidth: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        GestureDetector(child:Icon(Icons.search),
-                        onTap: (){
-
-                        },
-                        ),
-                        GestureDetector(child:Text(
-                          "Search Customer",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 15,
+                    child: Container(
+                      padding: EdgeInsets.all(3),
+                      height: MediaQuery.of(context).size.height/22,
+                        child:TypeAheadField<Customer>(
+                          textFieldConfiguration: TextFieldConfiguration(
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                              hintText: "Search Customer"
+                            )
                           ),
+                                itemBuilder: (BuildContext context,Customer? suggestion) {
+                                  final content=suggestion!;
+                                  return ListTile(
+                                    title: Text(content._name+"  ("+content._phone+")"),
+                                  );
+                                },
+                                onSuggestionSelected: (Customer? suggestion) async {
+                                  Fluttertoast.showToast(
+                                      msg:suggestion!._name+" is selected",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.BOTTOM,
+                                      textColor: Colors.green,
+                                      timeInSecForIosWeb: 10);
+                                  SharedPreferences prefs= await SharedPreferences.getInstance();
+                                  prefs.setString("customer_name",suggestion._name);
+                                },
+                                suggestionsCallback: CustomerApi.getUserSuggestion,
+                              )
+                        
                         ),
-                          onTap:(){Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => searchCustomer()));
-                          }
-                        ),
-                        GestureDetector(child:Icon(Icons.person_add,),
-                        onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PersonalDetails()),
-                          );
-                        },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                )),
                 SizedBox(
                   height: 40,
                 ),
@@ -241,5 +252,52 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+class Customer
+{
+  final String _name;
+  final String _phone;
+  final String id;
+  Customer.fromJson(Map<String,dynamic> json):
+        this._name=json["first_name"]??json["name"],
+        this._phone=json["mobile"],
+        this.id=json["id"].toString();
+
+}
+class CustomerApi {
+  static Future<List<Customer>> getUserSuggestion(String query)
+  async {
+    int i = 1;
+    var pages;
+    List<Customer>name = [];
+
+    late Customer cus;
+    do {
+      var response = await http.get(
+          Uri.parse("https://pos.sero.app/connector/api/contactapi/?page=$i"),
+          headers: {
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMwYjE2MGVhNGUzMzA4ZTNiMjhhZGNlYWEwNjllZTA2NjI5Y2M4ZjMxMWFjZjUwMDFjZmZkMTE1ZDZlNTliZGI5NmJlZmQ3ZGYzYjRhNWNhIn0.eyJhdWQiOiIzIiwianRpIjoiMzBiMTYwZWE0ZTMzMDhlM2IyOGFkY2VhYTA2OWVlMDY2MjljYzhmMzExYWNmNTAwMWNmZmQxMTVkNmU1OWJkYjk2YmVmZDdkZjNiNGE1Y2EiLCJpYXQiOjE2MjU4OTY4MDcsIm5iZiI6MTYyNTg5NjgwNywiZXhwIjoxNjU3NDMyODA3LCJzdWIiOiI4Iiwic2NvcGVzIjpbXX0.OJ9XTCy8i5-f17ZPWNpqdT6QMsDgSZUsSY9KFEb-2O6HehbHt1lteJGlLfxJ2IkXF7e9ZZmydHzb587kqhBc_GP4hxj6PdVpoX_GE05H0MGOUHfH59YgSIQaU1cGORBIK2B4Y1j4wyAmo0O1i5WAMQndkKxA03UFGdipiobet64hAvCIEu5CipJM7XPWogo2gLUoWob9STnwYQuOgeTLKfMsMG4bOeaoVISy3ypALDJxZHi85Q9DZgO_zbBp9MMOvhYm9S1vPzoKCaGSx2zNtmOtCmHtUAxCZbu0TR2VDN7RpLdMKgPF8eLJglUhCur3BQnXZfYWlVWdG-T3PCKMvJvoE6rZcVXy2mVJUk3fWgldcOAhPRmQtUS563BR0hWQDJOL3RsRAjeesMhRouCtfmQBcW83bRindIiykYV1HrjdJBQNb3yuFFJqs9u7kgVFgZmwzsbd512t9Vfe1Cq_DhXbJM2GhIoFg72fKbGImu7UnYONUGB3taMmQn4qCXoMFnDl7glDLU9ib5pbd0matbhgkydHqThk5RZOPWje9W93j9RvwqwYL1OkcV9VXWcxYk0wwKRMqNtx74GLOUtIh8XJDK3LtDpRwLKer4dDPxcQHNgwkEH7iJt40bd9j27Mcyech-BZDCZHRSZbwhT7GnNeu2IluqVq3V0hCW3VsB8" ??
+                ''
+          });
+      final List d = json.decode(response.body)["data"];
+      pages=json.decode(response.body);
+      print(d);
+      name.addAll(d.map((e) => Customer.fromJson(e)).where((element) {
+        final name = element._name.toLowerCase();
+        final _name = query.toLowerCase();
+        final phone = element._phone;
+        final _phone = query;
+        if (name.contains(_name))
+          return name.contains(_name);
+        else if(phone.contains(_phone))
+          return phone.contains(_phone);
+        else
+          return false;
+      }
+      ).toList());
+      i++;
+    }while(i<=pages["meta"]["last_page"]);
+    return name;
   }
 }
