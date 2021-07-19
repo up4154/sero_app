@@ -24,7 +24,6 @@ class _CartScreenState extends State<CartScreen> {
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
-
   int table_id=0;
   String table_name='';
   setBottomBarIndex(index){
@@ -67,14 +66,10 @@ class _CartScreenState extends State<CartScreen> {
           color: Colors.white,
           shape: CircularNotchedRectangle(),
           child: Container(
-            height: 100,
+            height: 70,
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                Container(
-                  height: 50,
-                  color: Colors.red,
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -112,8 +107,22 @@ class _CartScreenState extends State<CartScreen> {
                         icon: Icon(Icons.open_in_browser_sharp,
                           color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
                         ),
-                        onPressed: (){
-                          setBottomBarIndex(3);
+                        onPressed: () async {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          table_id=  prefs.getInt("table_id")!;
+                          table_name =prefs.getString("table_name")!;
+                          customer_name=prefs.getString("customer_name")!;
+                          selectedItems=prefs.getStringList("selected")!;
+                          setState(() {
+                            _currentIndex =0;
+
+                            setState(() {
+                              _isloading =false;
+                            });
+                            setState(() {
+                              setBottomBarIndex(3);
+                            });
+                          });
                         }),
                   ],
                 ),
@@ -285,8 +294,7 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   IconButton(
                     onPressed:(){
-                      setState(() {
-                      });
+
                     },
                     iconSize: 25,
                     icon: Icon(Icons.clear_all_sharp,
@@ -303,9 +311,26 @@ class _CartScreenState extends State<CartScreen> {
               Column(
                 children: [
                   IconButton(
-                    onPressed:(){
+                    onPressed:()async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      table_id=  prefs.getInt("table_id")!;
+                      table_name =prefs.getString("table_name")!;
+                      customer_name=prefs.getString("customer_name")!;
+                      selectedItems=prefs.getStringList("selected")!;
                       setState(() {
-                        Navigator.pop(context);
+                        _currentIndex =0;
+
+                        setState(() {
+                          _isloading =false;
+                        });
+                        setState(() {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CartScreen(selectedItems: prefs.getStringList("selected")?? [],selectedItemsprice:[],)),
+                          );
+
+                        });
                       });
                     },
                     iconSize: 40,
@@ -415,94 +440,94 @@ class _BodyLayoutState extends State<BodyLayout> {
   }
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.selectedItems.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
-          child: Container(
-              height:MediaQuery.of(context).size.height/10 ,
-              padding: EdgeInsets.only(left:10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: const Offset(
-                      1.0,
-                      1.0,
-                    ), //Offset
-                    blurRadius: 6.0,
-                    spreadRadius: 2.0,
-                  ), //BoxShadow
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: const Offset(0.0, 0.0),
-                    blurRadius: 0.0,
-                    spreadRadius: 0.0,
-                  ),],
-              ),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width/2.8,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 0),
-                      child: Text(
-                        widget.selectedItems[index],
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold
+    return Container(
+      height: MediaQuery.of(context).size.height/1.95,
+      child: ListView.builder(
+        itemCount: widget.selectedItems.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
+            child: Container(
+                height:MediaQuery.of(context).size.height/10 ,
+                padding: EdgeInsets.only(left:10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: const Offset(
+                        1.0,
+                        1.0,
+                      ), //Offset
+                      blurRadius: 6.0,
+                      spreadRadius: 2.0,
+                    ), //BoxShadow
+                    BoxShadow(
+                      color: Colors.white,
+                      offset: const Offset(0.0, 0.0),
+                      blurRadius: 0.0,
+                      spreadRadius: 0.0,
+                    ),],
+                ),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width/2.8,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 0),
+                        child: Text(
+                          widget.selectedItems[index],
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Row(
-                    //mainAxisAlignment: MainAxisAlignment.,
-                    children: [
-                      IconButton(
-                        onPressed:_decrementCounter,
-                        icon: Icon(Icons.remove_circle,
-                          size: 17,),
-                      ),
-                      Text(_counter.toString(),
-                        style: TextStyle(
-                            fontSize: 15
+                    Row(
+                      //mainAxisAlignment: MainAxisAlignment.,
+                      children: [
+                        IconButton(
+                          onPressed:_decrementCounter,
+                          icon: Icon(Icons.remove_circle,
+                            size: 17,),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: _incrementCounter,
-                        icon: Icon(Icons.add_circle_outlined,
-                          size: 17,
+                        Text(_counter.toString(),
+                          style: TextStyle(
+                              fontSize: 15
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  // Container(
-                  //     width: MediaQuery.of(context).size.width/9,
-                  //     child:Text(
-                  //       '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
-                  //       style: TextStyle(
-                  //           fontSize: 15,
-                  //           fontWeight: FontWeight.bold
-                  //       ),
-                  //     )),
-                  IconButton(
-                    onPressed: _incrementCounter,
-                    icon: Icon(Icons.delete,
-                      color: Colors.red,
-                      size: 25,),
-                  ),
-                ],
-              )
-          ),
-        );
-      },
+                        IconButton(
+                          onPressed: _incrementCounter,
+                          icon: Icon(Icons.add_circle_outlined,
+                            size: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Container(
+                    //     width: MediaQuery.of(context).size.width/9,
+                    //     child:Text(
+                    //       '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
+                    //       style: TextStyle(
+                    //           fontSize: 15,
+                    //           fontWeight: FontWeight.bold
+                    //       ),
+                    //     )),
+                    IconButton(
+                      onPressed: _incrementCounter,
+                      icon: Icon(Icons.delete,
+                        color: Colors.red,
+                        size: 25,),
+                    ),
+                  ],
+                )
+            ),
+          );
+        },
+      ),
     );
   }
 }
-
-
-
 
