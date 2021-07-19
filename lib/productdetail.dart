@@ -293,13 +293,15 @@ class _SelectItemState extends State<SelectItem> {
                       ],
                       borderRadius: BorderRadius.circular(10)
                   ),
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(3),
                   child: Column(
                     children: <Widget>[
                       SizedBox(
                         height: 6,
                       ),
                       Container(
+                        height: MediaQuery.of(context).size.height/14,
+                        width: MediaQuery.of(context).size.width,
                         child: CircleAvatar(
                             backgroundImage: NetworkImage(searchresultImages[index])
                         ),),
@@ -393,7 +395,7 @@ class _SelectItemState extends State<SelectItem> {
                         height: 6,
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height/13,
+                        height: MediaQuery.of(context).size.height/14,
                         width: MediaQuery.of(context).size.width,
                         child: CircleAvatar(
                             backgroundImage: NetworkImage(images[index])
@@ -438,8 +440,8 @@ class _SelectItemState extends State<SelectItem> {
                     {
                       var list=sharedPreferences.getStringList("selected");
                       _selectedItems.add(name[index]);
-                      _selectedItems.add(name[index]);
-                      list!.addAll(_selectedItems);
+                      var product=name[index];
+                      list!.add(product);
                       sharedPreferences.setStringList("selected", []);
                       sharedPreferences.setStringList("selected", list);
                       print(sharedPreferences.getStringList("selected"));
@@ -447,7 +449,7 @@ class _SelectItemState extends State<SelectItem> {
                       _selectedItemsprice.add(price[index]);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CartScreen(selectedItems: _selectedItems,selectedItemsprice: _selectedItemsprice,)),
+                        MaterialPageRoute(builder: (context) => CartScreen(selectedItems: sharedPreferences.getStringList("selected")?? [],selectedItemsprice: _selectedItemsprice,)),
                       );
                     }
                   else {
