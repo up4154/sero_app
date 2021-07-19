@@ -53,13 +53,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
   String totalAmount(){
-    tipAmount =double.parse(_tipController.text);
+    if(_tipController.text != ''){
+      tipAmount =double.parse(_tipController.text);
+      setState(() {
+        isEnabled ?
+        widget.Balance = ( widget.Balance+ tipAmount)
+            :widget.Balance = ( widget.Balance-tipAmount);
+      });
+    }
 
-    setState(() {
-      isEnabled ?
-      widget.Balance = ( widget.Balance+ tipAmount)
-      :widget.Balance = ( widget.Balance-tipAmount);
-    });
     return widget.Balance.toStringAsFixed(2);
   }
 
@@ -251,12 +253,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     key: _formKey,
                                     child: TextFormField(
                                       readOnly: isEnabled,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter tip amount';
-                                        }
-                                        return null;
-                                      },
                                       controller: _tipController,
                                       keyboardType:TextInputType.number,
                                       decoration: InputDecoration(
@@ -558,12 +554,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       key: _formKey,
                                       child: TextFormField(
                                         readOnly: isEnabled,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter tip amount';
-                                          }
-                                          return null;
-                                        },
                                         controller: _tipController,
                                         keyboardType:TextInputType.number,
                                         decoration: InputDecoration(
@@ -1231,14 +1221,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         setState(() {
                           if(isClicked2==false)
                           {
-                            if( _Key.currentState!.validate() && _formKey.currentState!.validate())
+                            if( _Key.currentState!.validate())
                           {
                             this.isEnabled = value!;
                             totalAmount();
                           }
                         }
                           else if(isClicked1 ==false){
-                            if(_formKey.currentState!.validate())
                             {
                               this.isEnabled = value!;
                               totalAmount();
