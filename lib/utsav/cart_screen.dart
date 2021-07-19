@@ -422,29 +422,25 @@ class BodyLayout extends StatefulWidget {
     ,required this.selectedItemsprice,}) : super(key: key);
 
   @override
-  _BodyLayoutState createState() => _BodyLayoutState();
+  _BodyLayoutState createState() => _BodyLayoutState(selectedItems);
 }
 
 class _BodyLayoutState extends State<BodyLayout> {
+  _BodyLayoutState(List<String> selectedItems);
+  List<String> selectedItems = [];
   int _counter =1;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-  void _decrementCounter() {
-    setState(() {
-      if(_counter>1)
-        _counter--;
-    });
-  }
+  List<int> counterList =[];
   @override
   Widget build(BuildContext context) {
+    _counter=widget.selectedItems.length;
     return Container(
       height: MediaQuery.of(context).size.height/1.95,
       child: ListView.builder(
         itemCount: widget.selectedItems.length,
         itemBuilder: (context, index) {
+          if(counterList.length < widget.selectedItems.length ) {
+            counterList.insert(index,1);
+          }
           return Padding(
             padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
             child: Container(
@@ -489,17 +485,26 @@ class _BodyLayoutState extends State<BodyLayout> {
                       //mainAxisAlignment: MainAxisAlignment.,
                       children: [
                         IconButton(
-                          onPressed:_decrementCounter,
+                          onPressed:(){
+                            setState(() {
+                              if(counterList[index]>1)
+                                counterList[index]--;
+                            });
+                          },
                           icon: Icon(Icons.remove_circle,
                             size: 17,),
                         ),
-                        Text(_counter.toString(),
+                        Text(counterList[index].toString(),
                           style: TextStyle(
                               fontSize: 15
                           ),
                         ),
                         IconButton(
-                          onPressed: _incrementCounter,
+                          onPressed:(){
+                            setState(() {
+                              counterList[index]++;
+                            });
+                          },
                           icon: Icon(Icons.add_circle_outlined,
                             size: 17,
                           ),
@@ -516,7 +521,9 @@ class _BodyLayoutState extends State<BodyLayout> {
                     //       ),
                     //     )),
                     IconButton(
-                      onPressed: _incrementCounter,
+                      onPressed:(){
+
+                      },
                       icon: Icon(Icons.delete,
                         color: Colors.red,
                         size: 25,),
