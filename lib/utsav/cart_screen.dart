@@ -492,7 +492,6 @@ class _BodyLayoutState extends State<BodyLayout> {
                           onPressed:(){
                             setState(() {
                               var c=int.parse(widget.counterList[index]);
-                              saveState();
                               if( c>1)
                                 c--;
                               widget.counterList[index]=c.toString();
@@ -533,7 +532,11 @@ class _BodyLayoutState extends State<BodyLayout> {
                     //     )),
                     IconButton(
                       onPressed:(){
-
+                        setState(() {
+                          widget.selectedItems.removeAt(index);
+                          widget.counterList.removeAt(index);
+                        });
+                        delete(index);
                       },
                       icon: Icon(Icons.delete,
                         color: Colors.red,
@@ -552,6 +555,19 @@ class _BodyLayoutState extends State<BodyLayout> {
     SharedPreferences prefs=await SharedPreferences.getInstance();
     prefs.setStringList("quantity",[]);
     prefs.setStringList("quantity",widget.counterList);
+  }
+
+  Future<void> delete(int index) async {
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+    var list=prefs.getStringList("selected");
+    prefs.setStringList("selected",[]);
+    var counter=prefs.getStringList("quantity");
+    counter!.removeAt(index);
+    prefs.setStringList("quantity",[]);
+    prefs.setStringList("quantity",counter);
+    list!.removeAt(index);
+    print(list);
+     prefs.setStringList("selected",list);
   }
 }
 

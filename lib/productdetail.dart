@@ -319,33 +319,42 @@ class _SelectItemState extends State<SelectItem> {
                   ),
                 ),
                     onTap: () async {
-                      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                      SharedPreferences sharedPreferences = await SharedPreferences
+                          .getInstance();
                       print(id[index]);
                       http.Response response = await http.get(
-                          Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
+                          Uri.parse(
+                              "https://pos.sero.app/connector/api/product/${id[index]}")
                           , headers: {
                         'Authorization':
                         sharedPreferences.getString("Authorization") ?? ''
-
                       });
                       var v = (json.decode(response.body));
                       //print(v["data"][0]["modifiers"]);
-                      List<dynamic> check=v["data"][0]["modifiers"];
-                      List<String> modifiers=[];
-                      if(!check.isEmpty){
+                      List<dynamic> check = v["data"][0]["modifiers"];
+                      List<String> modifiers = [];
+                      if (!check.isEmpty) {
                         for (var _mod in v["data"][0]["modifiers"][0]) {
                           print(_mod["name"]);
                           modifiers.add(_mod["name"]);
                         }
                       }
-                      if(modifiers.isEmpty)
-                      {
-                        _selectedItems.add(searchresult[index]);
-                        print( _selectedItems);
-                        _selectedItemsprice.add(price[index]);
+                      if (modifiers.isEmpty) {
+                        var list = sharedPreferences.getStringList("selected");
+                        //_selectedItems.add(name[index]);
+                        var product = searchresult[index];
+                        list!.add(product);
+                        sharedPreferences.setStringList("selected", []);
+                        sharedPreferences.setStringList("selected", list);
+                        print(sharedPreferences.getStringList("selected"));
+                        //print( _selectedItems);
+                        //_selectedItemsprice.add(price[index]);
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CartScreen(selectedItems: _selectedItems,selectedItemsprice: _selectedItemsprice,)),
+                          MaterialPageRoute(builder: (context) =>
+                              CartScreen(
+                                selectedItems: sharedPreferences.getStringList("selected") ?? [],
+                                selectedItemsprice: _selectedItemsprice,)),
                         );
                       }
                       else {
@@ -353,8 +362,7 @@ class _SelectItemState extends State<SelectItem> {
                           return add(modifiers: modifiers);
                         });
                       }
-                    }
-                );
+                    });
               }):GridView.builder(
               primary: false,
               padding: const EdgeInsets.all(10),
@@ -414,47 +422,50 @@ class _SelectItemState extends State<SelectItem> {
                   ),
                 ),
                   onTap: () async {
-                    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+                    SharedPreferences sharedPreferences = await SharedPreferences
+                        .getInstance();
                     print(id[index]);
-                  http.Response response = await http.get(
-                    Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
-      , headers: {
-                    'Authorization':
-                    sharedPreferences.getString("Authorization") ?? ''
-
-                  });
-                  var v = (json.decode(response.body));
-                  //print(v["data"][0]["modifiers"]);
-                   List<dynamic> check=v["data"][0]["modifiers"];
-                  List<String> modifiers=[];
-                  if(!check.isEmpty){
-                    for (var _mod in v["data"][0]["modifiers"][0]) {
-                      print(_mod["name"]);
-                      modifiers.add(_mod["name"]);
-                    }
-                  }
-                  if(modifiers.isEmpty) if(modifiers.isEmpty)
-                    {
-                      var list=sharedPreferences.getStringList("selected");
-                      _selectedItems.add(name[index]);
-                      var product=name[index];
-                      list!.add(product);
-                      sharedPreferences.setStringList("selected", []);
-                      sharedPreferences.setStringList("selected", list);
-                      print(sharedPreferences.getStringList("selected"));
-                      //print( _selectedItems);
-                      _selectedItemsprice.add(price[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CartScreen(selectedItems: sharedPreferences.getStringList("selected")?? [],selectedItemsprice: _selectedItemsprice,)),
-                      );
-                    }
-                  else {
-                    showDialog(context: context, builder: (context) {
-                      return add(modifiers: modifiers);
+                    http.Response response = await http.get(
+                        Uri.parse(
+                            "https://pos.sero.app/connector/api/product/${id[index]}")
+                        , headers: {
+                      'Authorization':
+                      sharedPreferences.getString("Authorization") ?? ''
                     });
-                  }
-                  }
+                    var v = (json.decode(response.body));
+                    //print(v["data"][0]["modifiers"]);
+                    List<dynamic> check = v["data"][0]["modifiers"];
+                    List<String> modifiers = [];
+                    if (check.isNotEmpty) {
+      for (var _mod in v["data"][0]["modifiers"][0]) {
+      print(_mod["name"]);
+      modifiers.add(_mod["name"]);
+      }
+      }
+                      if (modifiers.isEmpty) {
+                        var list = sharedPreferences.getStringList("selected");
+                        _selectedItems.add(name[index]);
+                        var product = name[index];
+                        list!.add(product);
+                        sharedPreferences.setStringList("selected", []);
+                        sharedPreferences.setStringList("selected", list);
+                        print(sharedPreferences.getStringList("selected"));
+                        //print( _selectedItems);
+                        _selectedItemsprice.add(price[index]);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>
+                              CartScreen(selectedItems: sharedPreferences
+                                  .getStringList("selected") ?? [],
+                                selectedItemsprice: _selectedItemsprice,)),
+                        );
+                      }
+                      else {
+                        showDialog(context: context, builder: (context) {
+                          return add(modifiers: modifiers);
+                        });
+                      }
+                    }
                 );
               })
       );
