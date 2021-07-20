@@ -21,6 +21,7 @@ class _CartScreenState extends State<CartScreen> {
   double paymentAmount=200.00;
   double discount =0.0;
   bool _isloading =false;
+  List<String> counter=[];
   int points=0;
   int _currentIndex = 0;
   var size,height,width;
@@ -41,6 +42,7 @@ class _CartScreenState extends State<CartScreen> {
     table_name =prefs.getString("table_name")!;
     customer_name=prefs.getString("customer_name")!;
     selectedItems=prefs.getStringList("selected")!;
+    counter=prefs.getStringList("quantity")!;
     setState(() {
       _isloading =false;
     });
@@ -206,7 +208,7 @@ class _CartScreenState extends State<CartScreen> {
           backgroundColor: Colors.white,
         ),
         body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),))
-            :BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,),
+            :BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,counterList:counter),
         bottomSheet:_currentIndex == 3 ? new Container(
           height: 70,
           decoration: BoxDecoration(
@@ -417,9 +419,12 @@ class _CartScreenState extends State<CartScreen> {
 class BodyLayout extends StatefulWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
+  List<String> counterList;
   BodyLayout({ Key? key,
     required this.selectedItems
-    ,required this.selectedItemsprice,}) : super(key: key);
+    ,required this.selectedItemsprice,
+  required this.counterList
+  }) : super(key: key);
 
   @override
   _BodyLayoutState createState() => _BodyLayoutState(selectedItems);
@@ -429,7 +434,6 @@ class _BodyLayoutState extends State<BodyLayout> {
   _BodyLayoutState(List<String> selectedItems);
   List<String> selectedItems = [];
   int _counter =1;
-  List<int> counterList =[];
   @override
   Widget build(BuildContext context) {
     _counter=widget.selectedItems.length;
@@ -438,8 +442,8 @@ class _BodyLayoutState extends State<BodyLayout> {
       child: ListView.builder(
         itemCount: widget.selectedItems.length,
         itemBuilder: (context, index) {
-          if(counterList.length < widget.selectedItems.length ) {
-            counterList.insert(index,1);
+          if(widget.counterList.length < widget.selectedItems.length ) {
+            widget.counterList.add("1");
           }
           return Padding(
             padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
@@ -487,14 +491,18 @@ class _BodyLayoutState extends State<BodyLayout> {
                         IconButton(
                           onPressed:(){
                             setState(() {
-                              if(counterList[index]>1)
-                                counterList[index]--;
+                              var c=int.parse(widget.counterList[index]);
+                              saveState();
+                              if( c>1)
+                                c--;
+                              widget.counterList[index]=c.toString();
+                              saveState();
                             });
                           },
                           icon: Icon(Icons.remove_circle,
                             size: 17,),
                         ),
-                        Text(counterList[index].toString(),
+                        Text(widget.counterList[index].toString(),
                           style: TextStyle(
                               fontSize: 15
                           ),
@@ -502,7 +510,10 @@ class _BodyLayoutState extends State<BodyLayout> {
                         IconButton(
                           onPressed:(){
                             setState(() {
-                              counterList[index]++;
+                              var c=int.parse(widget.counterList[index]);
+                              c++;
+                              widget.counterList[index]=c.toString();
+                              saveState();
                             });
                           },
                           icon: Icon(Icons.add_circle_outlined,
@@ -535,6 +546,12 @@ class _BodyLayoutState extends State<BodyLayout> {
         },
       ),
     );
+  }
+
+  Future<void> saveState() async {
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+    prefs.setStringList("quantity",[]);
+    prefs.setStringList("quantity",widget.counterList);
   }
 }
 
