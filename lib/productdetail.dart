@@ -333,7 +333,7 @@ class _SelectItemState extends State<SelectItem> {
                       //print(v["data"][0]["modifiers"]);
                       List<dynamic> check = v["data"][0]["modifiers"];
                       List<String> modifiers = [];
-                      if (!check.isEmpty) {
+                      if (check.isNotEmpty) {
                         for (var _mod in v["data"][0]["modifiers"][0]) {
                           print(_mod["name"]);
                           modifiers.add(_mod["name"]);
@@ -342,20 +342,14 @@ class _SelectItemState extends State<SelectItem> {
                       if (modifiers.isEmpty) {
                         var list = sharedPreferences.getStringList("selected");
                         //_selectedItems.add(name[index]);
-                        var product = searchresult[index];
-                        list!.add(product);
-                        sharedPreferences.setStringList("selected", []);
-                        sharedPreferences.setStringList("selected", list);
+                        setState(() {
+                          var product = searchresult[index];
+                          list!.add(product);
+                          sharedPreferences.setStringList("selected", []);
+                          sharedPreferences.setStringList("selected", list);
+                        });
                         print(sharedPreferences.getStringList("selected"));
-                        //print( _selectedItems);
-                        //_selectedItemsprice.add(price[index]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                              CartScreen(
-                                selectedItems: sharedPreferences.getStringList("selected") ?? [],
-                                selectedItemsprice: _selectedItemsprice,)),
-                        );
+                        gotocart();
                       }
                       else {
                         showDialog(context: context, builder: (context) {
@@ -437,11 +431,11 @@ class _SelectItemState extends State<SelectItem> {
                     List<dynamic> check = v["data"][0]["modifiers"];
                     List<String> modifiers = [];
                     if (check.isNotEmpty) {
-      for (var _mod in v["data"][0]["modifiers"][0]) {
-      print(_mod["name"]);
-      modifiers.add(_mod["name"]);
-      }
-      }
+                      for (var _mod in v["data"][0]["modifiers"][0]) {
+                      print(_mod["name"]);
+                      modifiers.add(_mod["name"]);
+                      }
+                      }
                       if (modifiers.isEmpty) {
                         var list = sharedPreferences.getStringList("selected");
                         _selectedItems.add(name[index]);
@@ -452,13 +446,7 @@ class _SelectItemState extends State<SelectItem> {
                         print(sharedPreferences.getStringList("selected"));
                         //print( _selectedItems);
                         _selectedItemsprice.add(price[index]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                              CartScreen(selectedItems: sharedPreferences
-                                  .getStringList("selected") ?? [],
-                                selectedItemsprice: _selectedItemsprice,)),
-                        );
+                       gotocart();
                       }
                       else {
                         showDialog(context: context, builder: (context) {
@@ -468,6 +456,16 @@ class _SelectItemState extends State<SelectItem> {
                     }
                 );
               })
+      );
+    }
+    Future<void> gotocart() async {
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            CartScreen(
+              selectedItems: sharedPreferences.getStringList("selected")??[],
+              selectedItemsprice: _selectedItemsprice,)),
       );
     }
   }

@@ -41,7 +41,7 @@ class _CartScreenState extends State<CartScreen> {
     table_id=  prefs.getInt("table_id")!;
     table_name =prefs.getString("table_name")!;
     customer_name=prefs.getString("customer_name")!;
-    selectedItems=prefs.getStringList("selected")!;
+    //selectedItems=prefs.getStringList("selected")!;
     counter=prefs.getStringList("quantity")!;
     setState(() {
       _isloading =false;
@@ -54,10 +54,6 @@ class _CartScreenState extends State<CartScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      selectedItems.clear();
-    });
-
     selectedItems =widget.selectedItems;
     selectedItemsprice =widget.selectedItemsprice;
     size = MediaQuery.of(context).size;
@@ -536,7 +532,7 @@ class _BodyLayoutState extends State<BodyLayout> {
                           widget.selectedItems.removeAt(index);
                           widget.counterList.removeAt(index);
                         });
-                        delete(index);
+                        delete(widget.selectedItems,widget.counterList);
                       },
                       icon: Icon(Icons.delete,
                         color: Colors.red,
@@ -557,17 +553,18 @@ class _BodyLayoutState extends State<BodyLayout> {
     prefs.setStringList("quantity",widget.counterList);
   }
 
-  Future<void> delete(int index) async {
+  Future<void> delete(List<String> s,List<String> counter) async {
     SharedPreferences prefs=await SharedPreferences.getInstance();
-    var list=prefs.getStringList("selected");
-    prefs.setStringList("selected",[]);
-    var counter=prefs.getStringList("quantity");
-    counter!.removeAt(index);
-    prefs.setStringList("quantity",[]);
+    // var list=prefs.getStringList("selected");
+    // prefs.setStringList("selected",[]);
+    // var counter=prefs.getStringList("quantity");
+    // counter!.removeAt(index);
+    // prefs.setStringList("quantity",[]);
+    // prefs.setStringList("quantity",counter);
+    // list!.removeAt(index);
+    // print(list);
     prefs.setStringList("quantity",counter);
-    list!.removeAt(index);
-    print(list);
-     prefs.setStringList("selected",list);
+     prefs.setStringList("selected",s);
   }
 }
 
