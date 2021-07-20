@@ -1,6 +1,7 @@
 import 'dart:convert';
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/productdetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -63,27 +64,36 @@ class _CategoryScreenState extends State<CategoryScreen> {
       } on PlatformException {
         barcodeScanRes = 'Failed to get platform version.';
       }
+      print(barcodeScanRes);
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      http.Response response = await http.get(
+          Uri.parse("https://pos.sero.app/connector/api/product?sku=$barcodeScanRes"), headers: {
+        'Authorization':
+        sharedPreferences.getString("Authorization")?? ''
+      });
+      v = (json.decode(response.body));
+      if(v["data"]!=[])
+        {
+          String s=v["data"][0]["name"]+" added to cart";
+          var list=sharedPreferences.getStringList("selected");
+          list!.add(v["data"][0]["name"]);
+          sharedPreferences.setStringList("selected", []);
+          sharedPreferences.setStringList("selected", list);
+          print(sharedPreferences.getStringList("selected"));
+          Fluttertoast.showToast(
+              msg: s,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              textColor: Colors.green,
+              timeInSecForIosWeb: 10);
+
+        }
 
       // If the widget was removed from the tree while the asynchronous platform
       // message was in flight, we want to discard the reply rather than calling
       // setState to update our non-existent appearance.
       if (!mounted) return;
-    /*try {
-       String qrResult = await BarcodeScanner.scan().toString();
-       print(qrResult);
-     }on PlatformException catch(e){
-       if(e.code==BarcodeScanner.cameraAccessDenied)
-         {
-           print("Camera Permission Denied");
-        }
-      else{
-         print(e.message);
-       }
-     }on FormatException{
-       print("You have pressed back button");
-     }catch(e){
-       print(e.toString());
-     }*/
+
 
    }
   Future<void> get() async {
