@@ -23,6 +23,7 @@ class _SelectItemState extends State<SelectItem> {
     bool _isSearching=false;
     List<String> searchresult = [];
     List<String> searchresultImages = [];
+    List<String> searchresultprice=[];
     List<String> images = [];
     List<String> price=[];
     List<String> _selectedItems = [];
@@ -90,9 +91,11 @@ class _SelectItemState extends State<SelectItem> {
       if (_isSearching != null) {
         for (int i = 0; i < name.length; i++) {
           String data = name[i];
+          var img=images[i];
           if (data.toLowerCase().contains(searchText.toLowerCase())) {
             searchresult.add(data);
-            searchresultImages.add(images[i]);
+            searchresultImages.add(img);
+            searchresultprice.add(price[i]);
           }
         }
       }}
@@ -341,12 +344,17 @@ class _SelectItemState extends State<SelectItem> {
                       }
                       if (modifiers.isEmpty) {
                         var list = sharedPreferences.getStringList("selected");
+                        var listofprice=sharedPreferences.getStringList("selectedprice");
                         //_selectedItems.add(name[index]);
                         setState(() {
+                          var _price=searchresultprice[index];
                           var product = searchresult[index];
                           list!.add(product);
+                          listofprice!.add(_price);
                           sharedPreferences.setStringList("selected", []);
                           sharedPreferences.setStringList("selected", list);
+                          sharedPreferences.setStringList("selectedprice", []);
+                          sharedPreferences.setStringList("selectedprice", listofprice);
                         });
                         print(sharedPreferences.getStringList("selected"));
                         gotocart();
@@ -438,13 +446,19 @@ class _SelectItemState extends State<SelectItem> {
                       }
                       if (modifiers.isEmpty) {
                         var list = sharedPreferences.getStringList("selected");
-                        _selectedItems.add(name[index]);
+                        var listofprice=sharedPreferences.getStringList("selectedprice");
                         var product = name[index];
+                        var _price=price[index];
                         list!.add(product);
+                        listofprice!.add(_price);
                         sharedPreferences.setStringList("selected", []);
                         sharedPreferences.setStringList("selected", list);
+                        sharedPreferences.setStringList("selectedprice", []);
+                        sharedPreferences.setStringList("selectedprice", listofprice);
+                        sharedPreferences.setStringList("selectedprice", listofprice);
+                        print(sharedPreferences.getStringList("selectedprice"));
                         print(sharedPreferences.getStringList("selected"));
-                        //print( _selectedItems);
+                        print( _selectedItems);
                         _selectedItemsprice.add(price[index]);
                        gotocart();
                       }
@@ -465,7 +479,7 @@ class _SelectItemState extends State<SelectItem> {
         MaterialPageRoute(builder: (context) =>
             CartScreen(
               selectedItems: sharedPreferences.getStringList("selected")??[],
-              selectedItemsprice: _selectedItemsprice,)),
+              selectedItemsprice: sharedPreferences.getStringList("selectedprice")??[],)),
       );
     }
   }
