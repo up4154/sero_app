@@ -269,7 +269,7 @@ class _SelectItemState extends State<SelectItem> {
               itemCount: searchresult.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
-                crossAxisSpacing: 25.0,
+                crossAxisSpacing: 22.0,
                 mainAxisSpacing: 25.0,
 
               ),
@@ -296,9 +296,6 @@ class _SelectItemState extends State<SelectItem> {
                   padding: const EdgeInsets.all(3),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(
-                        height: 6,
-                      ),
                       Container(
                         height: MediaQuery.of(context).size.height/14,
                         width: MediaQuery.of(context).size.width,
@@ -436,7 +433,7 @@ class _SelectItemState extends State<SelectItem> {
                       modifiers.add(_mod["name"]);
                     }
                   }
-                  if(modifiers.isEmpty)
+                  if(modifiers.isEmpty) if(modifiers.isEmpty)
                     {
                       var list=sharedPreferences.getStringList("selected");
                       _selectedItems.add(name[index]);

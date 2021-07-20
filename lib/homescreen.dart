@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setStringList("selected", []);
+    sharedPreferences.setStringList("quantity", []);
     var Response = await http.get(
         Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),
         headers: {
@@ -159,13 +160,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () {},
                     child: Container(
-                      padding: EdgeInsets.all(3),
+                      padding: EdgeInsets.all(5),
                       height: MediaQuery.of(context).size.height/22,
                         child:TypeAheadField<Customer>(
                           textFieldConfiguration: TextFieldConfiguration(
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
-                              hintText: "Search Customer"
+                              hintText: "Search Customer",
+                                suffixIcon: IconButton(
+                                  icon:Icon(Icons.person_add),
+                                  padding: EdgeInsets.zero,
+                                  color: Colors.black,
+                                  onPressed:(){Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PersonalDetails()));} ,
+                                ),
+                                prefixIcon:  IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon:Icon(Icons.search),
+                                  color: Colors.black,
+                                  onPressed:(){} ,
+                                ),
                             )
                           ),
                                 itemBuilder: (BuildContext context,Customer? suggestion) {
