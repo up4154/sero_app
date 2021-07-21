@@ -18,7 +18,7 @@ class _CartScreenState extends State<CartScreen> {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
   String customer_name="";
-  double paymentAmount=200.00;
+  double paymentAmount=0;
   double discount =0.0;
   bool _isloading =false;
   List<String> counter=[];
@@ -41,7 +41,7 @@ class _CartScreenState extends State<CartScreen> {
     table_id=  prefs.getInt("table_id")!;
     table_name =prefs.getString("table_name")!;
     customer_name=prefs.getString("customer_name")!;
-    selectedItems=prefs.getStringList("selected")!;
+    //selectedItems=prefs.getStringList("selected")!;
     counter=prefs.getStringList("quantity")!;
     setState(() {
       _isloading =false;
@@ -54,12 +54,9 @@ class _CartScreenState extends State<CartScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      selectedItems.clear();
-    });
-
     selectedItems =widget.selectedItems;
     selectedItemsprice =widget.selectedItemsprice;
+    pay();
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
@@ -208,7 +205,7 @@ class _CartScreenState extends State<CartScreen> {
           backgroundColor: Colors.white,
         ),
         body: _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),))
-            :BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,counterList:counter),
+            :BodyLayout( selectedItems: selectedItems,selectedItemsprice: selectedItemsprice,counterList:counter,payment:paymentAmount),
         bottomSheet:_currentIndex == 3 ? new Container(
           height: 70,
           decoration: BoxDecoration(
@@ -404,7 +401,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 icon: Icon(Icons.payment,
                   color: Colors.black87,),
-                label: Text("PAY:\$$paymentAmount",style: TextStyle(
+                label: Text("PAY:\$${paymentAmount.toStringAsFixed(2)}",style: TextStyle(
                     color: Colors.black87,
                     fontSize: 20
                 ),),
@@ -414,16 +411,26 @@ class _CartScreenState extends State<CartScreen> {
         )
     );
   }
+
+  void pay() {
+    paymentAmount=0;
+    for(int i=0;i<widget.selectedItemsprice.length;i++)
+      {
+        paymentAmount+=double.parse(widget.selectedItemsprice[i]);
+      }
+  }
 }
 
 class BodyLayout extends StatefulWidget {
   List<String> selectedItems = [];
   List<String> selectedItemsprice = [];
   List<String> counterList;
+  double payment;
   BodyLayout({ Key? key,
     required this.selectedItems
     ,required this.selectedItemsprice,
-  required this.counterList
+  required this.counterList,
+    required this.payment
   }) : super(key: key);
 
   @override
@@ -492,7 +499,6 @@ class _BodyLayoutState extends State<BodyLayout> {
                           onPressed:(){
                             setState(() {
                               var c=int.parse(widget.counterList[index]);
-                              saveState();
                               if( c>1)
                                 c--;
                               widget.counterList[index]=c.toString();
@@ -522,18 +528,24 @@ class _BodyLayoutState extends State<BodyLayout> {
                         ),
                       ],
                     ),
-                    // Container(
-                    //     width: MediaQuery.of(context).size.width/9,
-                    //     child:Text(
-                    //       '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
-                    //       style: TextStyle(
-                    //           fontSize: 15,
-                    //           fontWeight: FontWeight.bold
-                    //       ),
-                    //     )),
+                    Container(
+                        width: MediaQuery.of(context).size.width/9,
+                        child:Text(
+                          '\$'+double.parse(widget.selectedItemsprice[index]).toStringAsFixed(2),
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                          ),
+                        )),
                     IconButton(
                       onPressed:(){
-
+                        setState(() {
+                          widget.selectedItems.removeAt(index);
+                          widget.counterList.removeAt(index);
+                          widget.payment-=double.parse( widget.selectedItemsprice[index]);
+                          widget.selectedItemsprice.removeAt(index);
+                        });
+                        delete(widget.selectedItems,widget.counterList,widget.selectedItemsprice);
                       },
                       icon: Icon(Icons.delete,
                         color: Colors.red,
@@ -552,6 +564,22 @@ class _BodyLayoutState extends State<BodyLayout> {
     SharedPreferences prefs=await SharedPreferences.getInstance();
     prefs.setStringList("quantity",[]);
     prefs.setStringList("quantity",widget.counterList);
+  }
+
+  Future<void> delete(List<String> s,List<String> counter,List<String> price) async {
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+    // var list=prefs.getStringList("selected");
+    // prefs.setStringList("selected",[]);
+    // var counter=prefs.getStringList("quantity");
+    // counter!.removeAt(index);
+    // prefs.setStringList("quantity",[]);
+    // prefs.setStringList("quantity",counter);
+    // list!.removeAt(index);
+    // print(list);
+    prefs.setStringList("quantity",counter);
+     prefs.setStringList("selected",s);
+    prefs.setStringList("selectedprice",price);
+
   }
 }
 
