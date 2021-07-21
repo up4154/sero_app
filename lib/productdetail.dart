@@ -20,6 +20,8 @@ class SelectItem extends StatefulWidget {
 class _SelectItemState extends State<SelectItem> {
     var v;
     //List<String> selectedReportList = [];
+    late product _product;
+    List<product> _productlist=[];
     bool _isSearching=false;
     List<String> searchresult = [];
     List<String> searchresultImages = [];
@@ -64,14 +66,13 @@ class _SelectItemState extends State<SelectItem> {
        v = (json.decode(response.body));
       for (var i in v["data"]) {
         if (i["category"] == widget.category) {
-          price.add(i["sell_price_inc_tax"]);
-          name.add(i["product_name"]);
-          images.add(i["product_image_url"]);
-          id.add(i["product_id"].toString());
+         _product=product.fromJson(i);
+         _productlist.add(_product);
         }
       }
       i++;
       }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
+      print(_productlist);
       setState(() {
         _isloading = false;
       });
@@ -88,17 +89,23 @@ class _SelectItemState extends State<SelectItem> {
     }
     void searchOperation(String searchText) {
       searchresult.clear();
-      if (_isSearching != null) {
-        for (int i = 0; i < name.length; i++) {
-          String data = name[i];
-          var img=images[i];
+      searchresultImages.clear();
+      searchresultprice.clear();
+      if (_isSearching == true && searchText!="") {
+        for (int i = 0; i < _productlist.length; i++) {
+          print(i);
+          String data = _productlist[i].name;
+          var img=_productlist[i].url;
           if (data.toLowerCase().contains(searchText.toLowerCase())) {
             searchresult.add(data);
             searchresultImages.add(img);
-            searchresultprice.add(price[i]);
+            print(searchresult);
+            print(searchresultImages);
+            searchresultprice.add(_productlist[i].price);
           }
         }
-      }}
+      }
+    }
     int _currentIndex = 0;
     setBottomBarIndex(index) {
       setState(() {
@@ -324,10 +331,10 @@ class _SelectItemState extends State<SelectItem> {
                     onTap: () async {
                       SharedPreferences sharedPreferences = await SharedPreferences
                           .getInstance();
-                      print(id[index]);
+                      print(_productlist[index].id);
                       http.Response response = await http.get(
                           Uri.parse(
-                              "https://pos.sero.app/connector/api/product/${id[index]}")
+                              "https://pos.sero.app/connector/api/product/${_productlist[index].id}")
                           , headers: {
                         'Authorization':
                         sharedPreferences.getString("Authorization") ?? ''
@@ -368,7 +375,7 @@ class _SelectItemState extends State<SelectItem> {
               }):GridView.builder(
               primary: false,
               padding: const EdgeInsets.all(10),
-              itemCount: images.length,
+              itemCount: _productlist.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 25.0,
@@ -405,7 +412,7 @@ class _SelectItemState extends State<SelectItem> {
                         height: MediaQuery.of(context).size.height/14,
                         width: MediaQuery.of(context).size.width,
                         child: CircleAvatar(
-                            backgroundImage: NetworkImage(images[index])
+                            backgroundImage: NetworkImage(_productlist[index].url)
                         ),),
                       Container(
                         height: MediaQuery
@@ -417,7 +424,7 @@ class _SelectItemState extends State<SelectItem> {
                             .size
                             .width,
                         child: Text(
-                          name[index],
+                          _productlist[index].name,
                           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
                         ),),
                     ],
@@ -426,10 +433,10 @@ class _SelectItemState extends State<SelectItem> {
                   onTap: () async {
                     SharedPreferences sharedPreferences = await SharedPreferences
                         .getInstance();
-                    print(id[index]);
+                    print(_productlist[index].id);
                     http.Response response = await http.get(
                         Uri.parse(
-                            "https://pos.sero.app/connector/api/product/${id[index]}")
+                            "https://pos.sero.app/connector/api/product/${_productlist[index].id}")
                         , headers: {
                       'Authorization':
                       sharedPreferences.getString("Authorization") ?? ''
@@ -447,8 +454,8 @@ class _SelectItemState extends State<SelectItem> {
                       if (modifiers.isEmpty) {
                         var list = sharedPreferences.getStringList("selected");
                         var listofprice=sharedPreferences.getStringList("selectedprice");
-                        var product = name[index];
-                        var _price=price[index];
+                        var product = _productlist[index].name;
+                        var _price=_productlist[index].price;
                         list!.add(product);
                         listofprice!.add(_price);
                         sharedPreferences.setStringList("selected", []);
@@ -459,7 +466,7 @@ class _SelectItemState extends State<SelectItem> {
                         print(sharedPreferences.getStringList("selectedprice"));
                         print(sharedPreferences.getStringList("selected"));
                         print( _selectedItems);
-                        _selectedItemsprice.add(price[index]);
+                        //_selectedItemsprice.add(price[index]);
                        gotocart();
                       }
                       else {
@@ -483,4 +490,15 @@ class _SelectItemState extends State<SelectItem> {
       );
     }
   }
-
+  class product
+  {
+    final String id;
+    final String name;
+    final String price;
+    final String url;
+    product.fromJson(Map<String,dynamic> json):
+    price=json["sell_price_inc_tax"],
+    name=json["product_name"],
+    url=json["product_image_url"],
+    id=json["product_id"].toString();
+  }

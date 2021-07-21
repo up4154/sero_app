@@ -401,7 +401,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 icon: Icon(Icons.payment,
                   color: Colors.black87,),
-                label: Text("PAY:\$$paymentAmount",style: TextStyle(
+                label: Text("PAY:\$${paymentAmount.toStringAsFixed(2)}",style: TextStyle(
                     color: Colors.black87,
                     fontSize: 20
                 ),),
