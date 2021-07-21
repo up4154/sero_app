@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/addons_and_modifiers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +23,12 @@ class SelectItem extends StatefulWidget {
 class _SelectItemState extends State<SelectItem> {
     var v;
     //List<String> selectedReportList = [];
+    late product _product;
+    List<product> _productlist=[];
     bool _isSearching=false;
     List<String> searchresult = [];
     List<String> searchresultImages = [];
+    List<String> searchresultprice=[];
     List<String> images = [];
     List<String> price=[];
     List<String> _selectedItems = [];
@@ -63,17 +69,63 @@ class _SelectItemState extends State<SelectItem> {
        v = (json.decode(response.body));
       for (var i in v["data"]) {
         if (i["category"] == widget.category) {
-          price.add(i["sell_price_inc_tax"]);
-          name.add(i["product_name"]);
-          images.add(i["product_image_url"]);
-          id.add(i["product_id"].toString());
+         _product=product.fromJson(i);
+         _productlist.add(_product);
         }
       }
       i++;
       }while(v["meta"]["current_page"]!=v["meta"]["last_page"]);
+      print(_productlist);
       setState(() {
         _isloading = false;
       });
+    }
+    Future<void> _scanQR() async {
+      String barcodeScanRes;
+      // Platform messages may fail, so we use a try/catch PlatformException.
+      try {
+        barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+            '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+        print(barcodeScanRes);
+      } on PlatformException {
+        barcodeScanRes = 'Failed to get platform version.';
+      }
+      print(barcodeScanRes);
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      http.Response response = await http.get(
+          Uri.parse("https://pos.sero.app/connector/api/product?sku=$barcodeScanRes"), headers: {
+        'Authorization':
+        sharedPreferences.getString("Authorization")?? ''
+      });
+      var v = (json.decode(response.body));
+      if(v["data"]!=[])
+      {
+        String s=v["data"][0]["name"]+" added to cart";
+        var price=v["data"][0]["product_variations"][0]["variations"][0]["sell_price_inc_tax"];
+        print(price);
+        var list=sharedPreferences.getStringList("selected");
+        var pricelist=sharedPreferences.getStringList("selectedprice");
+        list!.add(v["data"][0]["name"]);
+        pricelist!.add(price.toString());
+        sharedPreferences.setStringList("selectedprice", []);
+        sharedPreferences.setStringList("selectedprice", pricelist);
+        sharedPreferences.setStringList("selected", []);
+        sharedPreferences.setStringList("selected", list);
+        print(sharedPreferences.getStringList("selected"));
+        Fluttertoast.showToast(
+            msg: s,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            textColor: Colors.green,
+            timeInSecForIosWeb: 10);
+      }
+
+      // If the widget was removed from the tree while the asynchronous platform
+      // message was in flight, we want to discard the reply rather than calling
+      // setState to update our non-existent appearance.
+      if (!mounted) return;
+
+
     }
     @override
     void initState() {
@@ -87,15 +139,23 @@ class _SelectItemState extends State<SelectItem> {
     }
     void searchOperation(String searchText) {
       searchresult.clear();
-      if (_isSearching != null) {
-        for (int i = 0; i < name.length; i++) {
-          String data = name[i];
+      searchresultImages.clear();
+      searchresultprice.clear();
+      if (_isSearching == true && searchText!="") {
+        for (int i = 0; i < _productlist.length; i++) {
+          print(i);
+          String data = _productlist[i].name;
+          var img=_productlist[i].url;
           if (data.toLowerCase().contains(searchText.toLowerCase())) {
             searchresult.add(data);
-            searchresultImages.add(images[i]);
+            searchresultImages.add(img);
+            print(searchresult);
+            print(searchresultImages);
+            searchresultprice.add(_productlist[i].price);
           }
         }
-      }}
+      }
+    }
     int _currentIndex = 0;
     setBottomBarIndex(index) {
       setState(() {
@@ -104,57 +164,6 @@ class _SelectItemState extends State<SelectItem> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-          bottomNavigationBar:BottomAppBar(
-            color: Colors.white,
-            shape: CircularNotchedRectangle(),
-            child: Container(
-              height: 70,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-
-                  // button 1
-                  IconButton(
-                    icon: Icon(Icons.home_sharp,
-                      color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                    ),
-                    onPressed: (){
-                      setBottomBarIndex(0);
-                    },
-                    splashColor: Colors.white,
-                  ),
-
-                  // button 2
-                  IconButton(
-                      icon: Icon(Icons.border_all_rounded,
-                        color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(1);
-                      }),
-
-                  // button 3
-                  IconButton(
-                      icon: Icon(Icons.shopping_cart,
-                        color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(2);
-                      }),
-
-                  // button 4
-                  IconButton(
-                      icon: Icon(Icons.open_in_browser_sharp,
-                        color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(3);
-                      }),
-                ],
-              ),
-            ),
-          ),
           appBar: AppBar(
             flexibleSpace:  Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -235,6 +244,11 @@ class _SelectItemState extends State<SelectItem> {
                                               prefixIcon: Icon(
                                                 Icons.search,color: Colors.black,
                                               ),
+                                            suffixIcon: IconButton(
+                                              icon:Icon(Icons.qr_code),
+                                              onPressed:_scanQR,
+                                              color: Colors.black,
+                                            )
 
 
                                           ),
@@ -298,10 +312,9 @@ class _SelectItemState extends State<SelectItem> {
                     children: <Widget>[
                       Container(
                         height: MediaQuery.of(context).size.height/14,
-                        width: MediaQuery.of(context).size.width,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(searchresultImages[index])
-                        ),),
+                        width: MediaQuery.of(context).size.width/4,
+                        child: Image.network(searchresultImages[index]),
+                        ),
                       Container(
                         height: MediaQuery
                             .of(context)
@@ -311,54 +324,65 @@ class _SelectItemState extends State<SelectItem> {
                             .of(context)
                             .size
                             .width,
-                        child: Text(
-                          searchresult[index],
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                        child: Center(
+                          child: searchresult[index].length>15?Text(
+                            searchresult[index].substring(0,13),
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                          ):Text(
+                              searchresult[index],
+                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
                         ),),
-                    ],
+                      )],
                   ),
                 ),
                     onTap: () async {
-                      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-                      print(id[index]);
+                      SharedPreferences sharedPreferences = await SharedPreferences
+                          .getInstance();
+                      print(_productlist[index].id);
                       http.Response response = await http.get(
-                          Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
+                          Uri.parse(
+                              "https://pos.sero.app/connector/api/product/${_productlist[index].id}")
                           , headers: {
                         'Authorization':
                         sharedPreferences.getString("Authorization") ?? ''
-
                       });
                       var v = (json.decode(response.body));
                       //print(v["data"][0]["modifiers"]);
-                      List<dynamic> check=v["data"][0]["modifiers"];
-                      List<String> modifiers=[];
-                      if(!check.isEmpty){
+                      List<dynamic> check = v["data"][0]["modifiers"];
+                      List<String> modifiers = [];
+                      if (check.isNotEmpty) {
                         for (var _mod in v["data"][0]["modifiers"][0]) {
                           print(_mod["name"]);
                           modifiers.add(_mod["name"]);
                         }
                       }
-                      if(modifiers.isEmpty)
-                      {
-                        _selectedItems.add(searchresult[index]);
-                        print( _selectedItems);
-                        _selectedItemsprice.add(price[index]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CartScreen(selectedItems: _selectedItems,selectedItemsprice: _selectedItemsprice,)),
-                        );
+                      if (modifiers.isEmpty) {
+                        var list = sharedPreferences.getStringList("selected");
+                        var listofprice=sharedPreferences.getStringList("selectedprice");
+                        //_selectedItems.add(name[index]);
+                        setState(() {
+                          var _price=searchresultprice[index];
+                          var product = searchresult[index];
+                          list!.add(product);
+                          listofprice!.add(_price);
+                          sharedPreferences.setStringList("selected", []);
+                          sharedPreferences.setStringList("selected", list);
+                          sharedPreferences.setStringList("selectedprice", []);
+                          sharedPreferences.setStringList("selectedprice", listofprice);
+                        });
+                        print(sharedPreferences.getStringList("selected"));
+                        gotocart();
                       }
                       else {
                         showDialog(context: context, builder: (context) {
                           return add(modifiers: modifiers);
                         });
                       }
-                    }
-                );
+                    });
               }):GridView.builder(
               primary: false,
               padding: const EdgeInsets.all(10),
-              itemCount: images.length,
+              itemCount: _productlist.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 25.0,
@@ -394,70 +418,96 @@ class _SelectItemState extends State<SelectItem> {
                       Container(
                         height: MediaQuery.of(context).size.height/14,
                         width: MediaQuery.of(context).size.width,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(images[index])
-                        ),),
+                        child:Image.network(_productlist[index].url)
+                        ),
                       Container(
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .height / 25,
+                        // height: MediaQuery
+                        //     .of(context)
+                        //     .size
+                        //     .height / 25,
                         width: MediaQuery
                             .of(context)
                             .size
                             .width,
-                        child: Text(
-                          name[index],
+                        child: Center(child: _productlist[index].name.length>15?Text(
+                          _productlist[index].name.substring(0,13),
                           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                        ):Text(
+                        _productlist[index].name,
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
                         ),),
-                    ],
+                      )],
                   ),
                 ),
                   onTap: () async {
-                    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-                    print(id[index]);
-                  http.Response response = await http.get(
-                    Uri.parse("https://pos.sero.app/connector/api/product/${id[index]}")
-      , headers: {
-                    'Authorization':
-                    sharedPreferences.getString("Authorization") ?? ''
-
-                  });
-                  var v = (json.decode(response.body));
-                  //print(v["data"][0]["modifiers"]);
-                   List<dynamic> check=v["data"][0]["modifiers"];
-                  List<String> modifiers=[];
-                  if(!check.isEmpty){
-                    for (var _mod in v["data"][0]["modifiers"][0]) {
+                    SharedPreferences sharedPreferences = await SharedPreferences
+                        .getInstance();
+                    print(_productlist[index].id);
+                    http.Response response = await http.get(
+                        Uri.parse(
+                            "https://pos.sero.app/connector/api/product/${_productlist[index].id}")
+                        , headers: {
+                      'Authorization':
+                      sharedPreferences.getString("Authorization") ?? ''
+                    });
+                    var v = (json.decode(response.body));
+                    //print(v["data"][0]["modifiers"]);
+                    List<dynamic> check = v["data"][0]["modifiers"];
+                    List<String> modifiers = [];
+                    if (check.isNotEmpty) {
+                      for (var _mod in v["data"][0]["modifiers"][0]) {
                       print(_mod["name"]);
                       modifiers.add(_mod["name"]);
+                      }
+                      }
+                      if (modifiers.isEmpty) {
+                        var list = sharedPreferences.getStringList("selected");
+                        var listofprice=sharedPreferences.getStringList("selectedprice");
+                        var product = _productlist[index].name;
+                        var _price=_productlist[index].price;
+                        list!.add(product);
+                        listofprice!.add(_price);
+                        sharedPreferences.setStringList("selected", []);
+                        sharedPreferences.setStringList("selected", list);
+                        sharedPreferences.setStringList("selectedprice", []);
+                        sharedPreferences.setStringList("selectedprice", listofprice);
+                        sharedPreferences.setStringList("selectedprice", listofprice);
+                        print(sharedPreferences.getStringList("selectedprice"));
+                        print(sharedPreferences.getStringList("selected"));
+                        print( _selectedItems);
+                        //_selectedItemsprice.add(price[index]);
+                       gotocart();
+                      }
+                      else {
+                        showDialog(context: context, builder: (context) {
+                          return add(modifiers: modifiers);
+                        });
+                      }
                     }
-                  }
-                  if(modifiers.isEmpty) if(modifiers.isEmpty)
-                    {
-                      var list=sharedPreferences.getStringList("selected");
-                      _selectedItems.add(name[index]);
-                      var product=name[index];
-                      list!.add(product);
-                      sharedPreferences.setStringList("selected", []);
-                      sharedPreferences.setStringList("selected", list);
-                      print(sharedPreferences.getStringList("selected"));
-                      //print( _selectedItems);
-                      _selectedItemsprice.add(price[index]);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CartScreen(selectedItems: sharedPreferences.getStringList("selected")?? [],selectedItemsprice: _selectedItemsprice,)),
-                      );
-                    }
-                  else {
-                    showDialog(context: context, builder: (context) {
-                      return add(modifiers: modifiers);
-                    });
-                  }
-                  }
                 );
               })
       );
     }
+    Future<void> gotocart() async {
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            CartScreen(
+              selectedItems: sharedPreferences.getStringList("selected")??[],
+              selectedItemsprice: sharedPreferences.getStringList("selectedprice")??[],)),
+      );
+    }
   }
-
+  class product
+  {
+    final String id;
+    final String name;
+    final String price;
+    final String url;
+    product.fromJson(Map<String,dynamic> json):
+    price=json["sell_price_inc_tax"],
+    name=json["product_name"],
+    url=json["product_image_url"],
+    id=json["product_id"].toString();
+  }

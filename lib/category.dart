@@ -75,8 +75,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
       if(v["data"]!=[])
         {
           String s=v["data"][0]["name"]+" added to cart";
+          var price=v["data"][0]["product_variations"][0]["variations"][0]["sell_price_inc_tax"];
+          print(price);
           var list=sharedPreferences.getStringList("selected");
+          var pricelist=sharedPreferences.getStringList("selectedprice");
           list!.add(v["data"][0]["name"]);
+          pricelist!.add(price.toString());
+          sharedPreferences.setStringList("selectedprice", []);
+          sharedPreferences.setStringList("selectedprice", pricelist);
           sharedPreferences.setStringList("selected", []);
           sharedPreferences.setStringList("selected", list);
           print(sharedPreferences.getStringList("selected"));
@@ -156,57 +162,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:BottomAppBar(
-        color: Colors.white,
-        shape: CircularNotchedRectangle(),
-        child: Container(
-          height: 70,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-
-              // button 1
-              IconButton(
-                icon: Icon(Icons.home_sharp,
-                  color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                ),
-                onPressed: (){
-                  setBottomBarIndex(0);
-                },
-                splashColor: Colors.white,
-              ),
-
-              // button 2
-              IconButton(
-                  icon: Icon(Icons.border_all_rounded,
-                    color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(1);
-                  }),
-
-              // button 3
-              IconButton(
-                  icon: Icon(Icons.shopping_cart,
-                    color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(2);
-                  }),
-
-              // button 4
-              IconButton(
-                  icon: Icon(Icons.open_in_browser_sharp,
-                    color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(3);
-                  }),
-            ],
-          ),
-        ),
-      ),
       appBar: AppBar(
     flexibleSpace:  Column(
     mainAxisAlignment: MainAxisAlignment.start,

@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   bool _isloading = false;
   late String _name;
+  String hint="Search Customer";
   final List<String> _suggestions = [
     'Alligator',
     'Buffalo',
@@ -44,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setStringList("selected", []);
+    sharedPreferences.setStringList("selectedprice", []);
     sharedPreferences.setStringList("quantity", []);
     var Response = await http.get(
         Uri.parse("https://pos.sero.app/connector/api/user/loggedin"),
@@ -73,56 +75,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: CircularNotchedRectangle(),
-        child: Container(
-          height: 50,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+      appBar: AppBar(
 
-              // button 1
-              IconButton(
-                icon: Icon(Icons.home_sharp,
-                  color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                ),
-                onPressed: (){
-                  setBottomBarIndex(0);
-                },
-                splashColor: Colors.white,
+        leading: Icon(Icons.menu),
+        title: Center(child: Image.asset("images/logo.png",height: MediaQuery.of(context).size.height/22,width: MediaQuery.of(context).size.width/3,)),
+        backgroundColor: Color(0xffffd45f),
+        actions: [
+          Container(
+              margin: EdgeInsets.only(right: 20),
+              child: Icon(Icons.notifications,color: Colors.grey.shade700,)),
+            SizedBox(height: 10,),
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: CircleAvatar(
+                  backgroundImage: NetworkImage('https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
               ),
+            ),
+            SizedBox(height: 10,),
 
-              // button 2
-              IconButton(
-                  icon: Icon(Icons.border_all_rounded,
-                    color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(1);
-                  }),
-
-              // button 3
-              IconButton(
-                  icon: Icon(Icons.shopping_cart,
-                    color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(2);
-                  }),
-
-              // button 4
-              IconButton(
-                  icon: Icon(Icons.open_in_browser_sharp,
-                    color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                  ),
-                  onPressed: (){
-                    setBottomBarIndex(3);
-                  }),
-            ],
-          ),
-        ),
+        ],
       ),
       body:  _isloading?Center(child:CircularProgressIndicator(color: Color(0xff000066),)):Padding(
           padding: const EdgeInsets.only(left: 15,right: 15),
@@ -164,9 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: MediaQuery.of(context).size.height/22,
                         child:TypeAheadField<Customer>(
                           textFieldConfiguration: TextFieldConfiguration(
+                            controller: _typeAheadController,
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
-                              hintText: "Search Customer",
+                              hintText: hint,
                                 suffixIcon: IconButton(
                                   icon:Icon(Icons.person_add),
                                   padding: EdgeInsets.zero,
@@ -191,6 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                                 onSuggestionSelected: (Customer? suggestion) async {
+                                  hint=suggestion!._name;
+                                  _typeAheadController.text=suggestion._name;
                                   Fluttertoast.showToast(
                                       msg:suggestion!._name+" is selected",
                                       toastLength: Toast.LENGTH_LONG,
