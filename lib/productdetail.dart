@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/addons_and_modifiers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +80,53 @@ class _SelectItemState extends State<SelectItem> {
         _isloading = false;
       });
     }
+    Future<void> _scanQR() async {
+      String barcodeScanRes;
+      // Platform messages may fail, so we use a try/catch PlatformException.
+      try {
+        barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+            '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+        print(barcodeScanRes);
+      } on PlatformException {
+        barcodeScanRes = 'Failed to get platform version.';
+      }
+      print(barcodeScanRes);
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+      http.Response response = await http.get(
+          Uri.parse("https://pos.sero.app/connector/api/product?sku=$barcodeScanRes"), headers: {
+        'Authorization':
+        sharedPreferences.getString("Authorization")?? ''
+      });
+      var v = (json.decode(response.body));
+      if(v["data"]!=[])
+      {
+        String s=v["data"][0]["name"]+" added to cart";
+        var price=v["data"][0]["product_variations"][0]["variations"][0]["sell_price_inc_tax"];
+        print(price);
+        var list=sharedPreferences.getStringList("selected");
+        var pricelist=sharedPreferences.getStringList("selectedprice");
+        list!.add(v["data"][0]["name"]);
+        pricelist!.add(price.toString());
+        sharedPreferences.setStringList("selectedprice", []);
+        sharedPreferences.setStringList("selectedprice", pricelist);
+        sharedPreferences.setStringList("selected", []);
+        sharedPreferences.setStringList("selected", list);
+        print(sharedPreferences.getStringList("selected"));
+        Fluttertoast.showToast(
+            msg: s,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            textColor: Colors.green,
+            timeInSecForIosWeb: 10);
+      }
+
+      // If the widget was removed from the tree while the asynchronous platform
+      // message was in flight, we want to discard the reply rather than calling
+      // setState to update our non-existent appearance.
+      if (!mounted) return;
+
+
+    }
     @override
     void initState() {
       get();
@@ -114,57 +164,6 @@ class _SelectItemState extends State<SelectItem> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-          bottomNavigationBar:BottomAppBar(
-            color: Colors.white,
-            shape: CircularNotchedRectangle(),
-            child: Container(
-              height: 70,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-
-                  // button 1
-                  IconButton(
-                    icon: Icon(Icons.home_sharp,
-                      color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                    ),
-                    onPressed: (){
-                      setBottomBarIndex(0);
-                    },
-                    splashColor: Colors.white,
-                  ),
-
-                  // button 2
-                  IconButton(
-                      icon: Icon(Icons.border_all_rounded,
-                        color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(1);
-                      }),
-
-                  // button 3
-                  IconButton(
-                      icon: Icon(Icons.shopping_cart,
-                        color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(2);
-                      }),
-
-                  // button 4
-                  IconButton(
-                      icon: Icon(Icons.open_in_browser_sharp,
-                        color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(3);
-                      }),
-                ],
-              ),
-            ),
-          ),
           appBar: AppBar(
             flexibleSpace:  Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -245,6 +244,11 @@ class _SelectItemState extends State<SelectItem> {
                                               prefixIcon: Icon(
                                                 Icons.search,color: Colors.black,
                                               ),
+                                            suffixIcon: IconButton(
+                                              icon:Icon(Icons.qr_code),
+                                              onPressed:_scanQR,
+                                              color: Colors.black,
+                                            )
 
 
                                           ),
@@ -308,10 +312,9 @@ class _SelectItemState extends State<SelectItem> {
                     children: <Widget>[
                       Container(
                         height: MediaQuery.of(context).size.height/14,
-                        width: MediaQuery.of(context).size.width,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(searchresultImages[index])
-                        ),),
+                        width: MediaQuery.of(context).size.width/4,
+                        child: Image.network(searchresultImages[index]),
+                        ),
                       Container(
                         height: MediaQuery
                             .of(context)
@@ -321,11 +324,15 @@ class _SelectItemState extends State<SelectItem> {
                             .of(context)
                             .size
                             .width,
-                        child: Text(
-                          searchresult[index],
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                        child: Center(
+                          child: searchresult[index].length>15?Text(
+                            searchresult[index].substring(0,13),
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                          ):Text(
+                              searchresult[index],
+                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
                         ),),
-                    ],
+                      )],
                   ),
                 ),
                     onTap: () async {
@@ -411,23 +418,25 @@ class _SelectItemState extends State<SelectItem> {
                       Container(
                         height: MediaQuery.of(context).size.height/14,
                         width: MediaQuery.of(context).size.width,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(_productlist[index].url)
-                        ),),
+                        child:Image.network(_productlist[index].url)
+                        ),
                       Container(
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .height / 25,
+                        // height: MediaQuery
+                        //     .of(context)
+                        //     .size
+                        //     .height / 25,
                         width: MediaQuery
                             .of(context)
                             .size
                             .width,
-                        child: Text(
-                          _productlist[index].name,
+                        child: Center(child: _productlist[index].name.length>15?Text(
+                          _productlist[index].name.substring(0,13),
                           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
+                        ):Text(
+                        _productlist[index].name,
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 10),
                         ),),
-                    ],
+                      )],
                   ),
                 ),
                   onTap: () async {
