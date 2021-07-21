@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sero_app/utsav/payment_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Shipping extends StatefulWidget {
   double Ammount=0.0;
@@ -19,28 +23,28 @@ class Shipping extends StatefulWidget {
 }
 
 class _ShippingState extends State<Shipping> {
+  var _isloading=false;
   double shipAmount=0.0;
   double packageAmount=0.0;
   String dropdownValue1 ='Driver Contact';
   bool isClickedAdd = true;
   bool isClickedCancel = true;
   String shippingCharge ='0';
-  final _shipChargeController = new TextEditingController();
+  TextEditingController _shipChargeController = new TextEditingController();
   TextEditingController _packageChargeController = new TextEditingController();
-  // final _formKey = GlobalKey<FormState>();
-  final _forKey = GlobalKey<FormState>();
-
+  final _formKey = GlobalKey<FormState>();
+  late customer _customer;
   String totalAmounttype(){
     shipAmount =double.parse(_shipChargeController.text);
     if(_packageChargeController.text != ''){
       packageAmount =double.parse(_packageChargeController.text);
-      double totalAmount = (widget.Balance + shipAmount+packageAmount);
+      double totalAmount = (widget.Ammount + shipAmount+packageAmount);
       setState(() {
         shippingCharge =totalAmount.toStringAsFixed(2);
       });
     }
     else{
-      double totalAmount = (widget.Balance + shipAmount);
+      double totalAmount = (widget.Ammount + shipAmount);
       setState(() {
         shippingCharge =totalAmount.toStringAsFixed(2);
       });
@@ -48,6 +52,75 @@ class _ShippingState extends State<Shipping> {
 
     return shippingCharge;
   }
+  List<String> _charges =[];
+  _ShippingState() {
+    fetchData().then((val) => setState(() {
+      _charges= val;
+    }));
+  }
+
+  Future<List<String>> fetchData() async {
+    Map data = await getData();
+    List<String> charges =[];
+    for(var i in data['data'])
+    {
+      charges.add(i['shipping_charges']);
+      charges.add(i['packing_charge']);
+      print(charges);
+    }
+    return charges;
+  }
+
+  Map input={};
+  _sendData() async{
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    var id = sharedPreferences.getString("customer_id");
+    var response = await http.put(
+        Uri.parse("https://pos.sero.app/connector/api/sell/$id"), body: input,
+        headers: {
+          'Authorization':
+          sharedPreferences.getString("Authorization") ?? ''
+        }
+    );
+    print(response);
+    _customer = customer.fromJson(json.decode(response.body));
+    if (_customer.error != "null") {
+      setState(() {
+        _isloading = false;
+      });
+      Fluttertoast.showToast(
+          msg: _customer.error,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.red,
+          timeInSecForIosWeb: 10);
+    }
+    else {
+      setState(() {
+        _isloading = false;
+        print(_customer.id);
+        _charges.clear();
+        print(_charges);
+      });
+      Fluttertoast.showToast(
+          msg: "Shipping done",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.green,
+          timeInSecForIosWeb: 10);
+      setState(() {
+        _isloading = false;
+      });
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentScreen(Ammount:widget.Ammount , Balance:double.parse(shippingCharge),
+              Discountt: widget.Discountt, Redeem: widget.Redeem ,),
+          ));
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -55,7 +128,8 @@ class _ShippingState extends State<Shipping> {
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         elevation: 16,
-        child:
+        child:_isloading?Center(
+            child: CircularProgressIndicator(color: Color(0xff000066),)):
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: SingleChildScrollView(
@@ -92,7 +166,7 @@ class _ShippingState extends State<Shipping> {
                         Padding(
                           padding: const EdgeInsets.only(top:4,left: 45,bottom: 20,right: 45),
                           child: Form(
-                            key: _forKey,
+                            key: _formKey,
                             child: TextFormField(
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -232,8 +306,13 @@ class _ShippingState extends State<Shipping> {
                                   width: 130,
                                 ),
                                 onTap: (){
+                                  input={
+                                    'shipping_charges':_shipChargeController.text.toString(),
+                                    'packing_charge':_packageChargeController.text.toString()
+                                  };
                                   setState(() {
-                                    if(_forKey.currentState!.validate()){
+                                    if(_formKey.currentState!.validate()){
+                                      _sendData();
                                     totalAmounttype();
                                     Navigator.push(
                                       context,
@@ -275,4 +354,24 @@ class _ShippingState extends State<Shipping> {
         )
     );
   }
+}
+Future<Map<String, dynamic>> getData() async {
+  SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+   var id = sharedPreferences.getString("customer_id");
+   print(id);
+
+  String myUrl = "https://pos.sero.app/connector/api/sell/$id";
+  http.Response response = await http.get(Uri.parse(myUrl), headers: {
+    'Authorization':
+    sharedPreferences.getString("Authorization") ?? ''
+  });
+  return json.decode(response.body);
+}
+class customer
+{
+  final String error;
+  final String id;
+  customer.fromJson(Map<String,dynamic> Json):
+        this.error=Json["error"].toString(),
+        this.id=Json["id"].toString();
 }

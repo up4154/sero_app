@@ -200,6 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       timeInSecForIosWeb: 10);
                                   SharedPreferences prefs= await SharedPreferences.getInstance();
                                   prefs.setString("customer_name",suggestion._name);
+                                  prefs.setString("customer_id",suggestion.id);
+                                  print(suggestion.id);
                                 },
                                 suggestionsCallback: CustomerApi.getUserSuggestion,
                               )
@@ -289,7 +291,6 @@ class CustomerApi {
     var pages;
     List<Customer>name = [];
 
-    late Customer cus;
     do {
       var response = await http.get(
           Uri.parse("https://pos.sero.app/connector/api/contactapi/?page=$i"),

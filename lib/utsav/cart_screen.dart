@@ -61,74 +61,74 @@ class _CartScreenState extends State<CartScreen> {
     height = size.height;
     width = size.width;
     return Scaffold(
-        bottomNavigationBar:BottomAppBar(
-          color: Colors.white,
-          shape: CircularNotchedRectangle(),
-          child: Container(
-            height: 70,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // button 1
-                    IconButton(
-                      icon: Icon(Icons.home_sharp,
-                        color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
-                      ),
-                      onPressed: (){
-                        setBottomBarIndex(0);
-                      },
-                      splashColor: Colors.white,
-                    ),
-
-                    // button 2
-                    IconButton(
-                        icon: Icon(Icons.border_all_rounded,
-                          color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
-                        ),
-                        onPressed: (){
-                          setBottomBarIndex(1);
-                        }),
-
-                    // button 3
-                    IconButton(
-                        icon: Icon(Icons.shopping_cart,
-                          color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
-                        ),
-                        onPressed: (){
-                          setBottomBarIndex(2);
-                        }),
-
-                    // button 4
-                    IconButton(
-                        icon: Icon(Icons.open_in_browser_sharp,
-                          color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
-                        ),
-                        onPressed: () async {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          table_id=  prefs.getInt("table_id")!;
-                          table_name =prefs.getString("table_name")!;
-                          customer_name=prefs.getString("customer_name")!;
-                          selectedItems=prefs.getStringList("selected")!;
-                          setState(() {
-                            _currentIndex =0;
-
-                            setState(() {
-                              _isloading =false;
-                            });
-                            setState(() {
-                              setBottomBarIndex(3);
-                            });
-                          });
-                        }),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar:BottomAppBar(
+        //   color: Colors.white,
+        //   shape: CircularNotchedRectangle(),
+        //   child: Container(
+        //     height: 70,
+        //     padding: EdgeInsets.symmetric(horizontal: 20),
+        //     child: Column(
+        //       children: [
+        //         Row(
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: [
+        //             // button 1
+        //             IconButton(
+        //               icon: Icon(Icons.home_sharp,
+        //                 color: _currentIndex == 0 ? Color(0xFFFFD45F) : Colors.grey[800],
+        //               ),
+        //               onPressed: (){
+        //                 setBottomBarIndex(0);
+        //               },
+        //               splashColor: Colors.white,
+        //             ),
+        //
+        //             // button 2
+        //             IconButton(
+        //                 icon: Icon(Icons.border_all_rounded,
+        //                   color: _currentIndex == 1 ? Color(0xFFFFD45F) : Colors.grey[800],
+        //                 ),
+        //                 onPressed: (){
+        //                   setBottomBarIndex(1);
+        //                 }),
+        //
+        //             // button 3
+        //             IconButton(
+        //                 icon: Icon(Icons.shopping_cart,
+        //                   color: _currentIndex == 2 ? Color(0xFFFFD45F) : Colors.grey[800],
+        //                 ),
+        //                 onPressed: (){
+        //                   setBottomBarIndex(2);
+        //                 }),
+        //
+        //             // button 4
+        //             IconButton(
+        //                 icon: Icon(Icons.open_in_browser_sharp,
+        //                   color: _currentIndex == 3 ? Color(0xFFFFD45F) : Colors.grey[800],
+        //                 ),
+        //                 onPressed: () async {
+        //                   SharedPreferences prefs = await SharedPreferences.getInstance();
+        //                   table_id=  prefs.getInt("table_id")!;
+        //                   table_name =prefs.getString("table_name")!;
+        //                   customer_name=prefs.getString("customer_name")!;
+        //                   selectedItems=prefs.getStringList("selected")!;
+        //                   setState(() {
+        //                     _currentIndex =0;
+        //
+        //                     setState(() {
+        //                       _isloading =false;
+        //                     });
+        //                     setState(() {
+        //                       setBottomBarIndex(3);
+        //                     });
+        //                   });
+        //                 }),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
         appBar: AppBar(
           flexibleSpace:  Column(
               mainAxisAlignment: MainAxisAlignment.start,

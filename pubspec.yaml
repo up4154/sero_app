@@ -40,7 +40,7 @@ dependencies:
   #barcode_scan: any
   badges:
   flutter_barcode_scanner: ^2.0.0
-
+  persistent_bottom_nav_bar:
 
 
 

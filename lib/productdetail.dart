@@ -142,6 +142,7 @@ class _SelectItemState extends State<SelectItem> {
                       ),
                       onPressed: (){
                         setBottomBarIndex(1);
+                        Navigator.pop(context);
                       }),
 
                   // button 3
@@ -160,6 +161,7 @@ class _SelectItemState extends State<SelectItem> {
                       ),
                       onPressed: (){
                         setBottomBarIndex(3);
+                        gotocart();
                       }),
                 ],
               ),
@@ -467,7 +469,7 @@ class _SelectItemState extends State<SelectItem> {
                         print(sharedPreferences.getStringList("selected"));
                         print( _selectedItems);
                         //_selectedItemsprice.add(price[index]);
-                       gotocart();
+
                       }
                       else {
                         showDialog(context: context, builder: (context) {
